@@ -66,10 +66,10 @@
 
 //#define DEBUG
 #ifdef DEBUG
-    #define DEBUG_PRINT(x) Serial.print(x)
-    #define DEBUG_PRINTF(x, y) Serial.print(x, y)
-    #define DEBUG_PRINTLN(x) Serial.println(x)
-    #define DEBUG_PRINTLNF(x, y) Serial.println(x, y)
+    #define DEBUG_PRINT(x) std::cout << x
+    #define DEBUG_PRINTF(x, y) std::cout << y << x
+    #define DEBUG_PRINTLN(x) std::cout << x << std::endl
+    #define DEBUG_PRINTLNF(x, y) std::cout << y << x << std::endl
 #else
     #define DEBUG_PRINT(x)
     #define DEBUG_PRINTF(x, y)
