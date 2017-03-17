@@ -19,6 +19,7 @@
 #define    MPU6050_H
 
 #include "I2cPort.h"
+#include <math.h>
 
 #define SELF_TEST_X				0x0D
 #define SELF_TEST_Y				0x0E
