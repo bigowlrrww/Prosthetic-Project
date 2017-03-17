@@ -445,7 +445,7 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	uint8_t MPU6050::readMemoryByte() {
-		i2c->readByte(RA_MEM_R_W, buffer);
+		buffer = i2c->readByte(RA_MEM_R_W);
 		return buffer[0];
 	}
 	
@@ -694,4 +694,53 @@ namespace cacaosd_mpu6050 {
 	void MPU6050::setOTPBankValid(bool enabled) {
 		i2c->writeBit(RA_XG_OFFS_TC, enabled, TC_OTP_BNK_VLD_BIT);
 	}
+	
+	void MPU6050::resetFIFO() {
+		i2c->writeBit(USER_CTRL, true, USERCTRL_FIFO_RESET_BIT);
+	}
+	
+	uint16_t MPU6050::getFIFOCount() {
+		i2c->readByteBuffer(RA_FIFO_COUNTH, buffer, 2);
+		return (((uint16_t)buffer[0]) << 8) | buffer[1];
+	}
+	
+	void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
+		i2c->readByteBuffer(RA_FIFO_R_W, data, length);
+	}
+	
+	void MPU6050::setMotionDetectionThreshold(uint8_t threshold) {
+		i2c->writeByte(RA_MOT_THR, threshold);
+	}
+	
+	void MPU6050::setZeroMotionDetectionThreshold(uint8_t threshold) {
+		i2c->writeByte(RA_ZRMOT_THR, threshold);
+	}
+
+	uint8_t MPU6050::getZeroMotionDetectionDuration() {
+		buffer = i2c->readByte(RA_ZRMOT_DUR);
+		return buffer[0];
+	}
+	
+	void MPU6050::setZeroMotionDetectionDuration(uint8_t duration) {
+		i2c->writeByte(RA_ZRMOT_DUR, duration);
+	}
+	
+	void MPU6050::setFIFOEnabled(bool enabled) {
+		i2c->writeBit(USER_CTRL, enabled, USERCTRL_FIFO_EN_BIT);
+	}
+
+	void MPU6050::setDMPEnabled(bool enabled) {
+		i2c->writeBit(USER_CTRL, enabled, USERCTRL_DMP_EN_BIT);
+	}
+
+	void MPU6050::resetDMP() {
+		i2c->writeBit(USER_CTRL, true, USERCTRL_DMP_RESET_BIT);
+	}
+	
+	uint8_t MPU6050::getIntStatus() {
+		buffer = i2c->readByte(RA_INT_STATUS);
+		return buffer[0];
+	}
+	
+	
 }  // namespace cacaosd_mpu6050

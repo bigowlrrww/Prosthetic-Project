@@ -130,6 +130,16 @@
 #define RA_DMP_CFG_2       				0x71
 #define RA_XG_OFFS_TC       			0x00 //[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
 #define TC_OTP_BNK_VLD_BIT  			0
+#define USERCTRL_FIFO_RESET_BIT         2
+#define RA_FIFO_COUNTH      			0x72
+#define RA_FIFO_R_W         			0x74
+#define RA_MOT_THR          			0x1F
+#define RA_ZRMOT_THR        			0x21
+#define RA_ZRMOT_DUR        			0x22
+#define USERCTRL_FIFO_EN_BIT            6
+#define USERCTRL_DMP_EN_BIT             7
+#define USERCTRL_DMP_RESET_BIT          3
+#define RA_INT_STATUS       			0x3A
 
 
 using namespace cacaosd_i2cport;
@@ -237,6 +247,45 @@ namespace cacaosd_mpu6050 {
         void setFIFO_Reset(uint8_t value);
 
         uint8_t getFIFO_Reset();
+		//ADDED BY DEAN HOVINGHOFF
+		
+		void MPU6050::setMemoryBank(uint8_t bank, bool prefetchEnabled, bool userBank);
+		void MPU6050::setMemoryStartAddress(uint8_t address);
+		uint8_t MPU6050::readMemoryByte();
+		uint8_t MPU6050::getOTPBankValid();
+		int8_t MPU6050::getXGyroOffsetTC();
+		void MPU6050::setXGyroOffsetTC(int8_t offset);
+		int8_t MPU6050::getYGyroOffsetTC();
+		void MPU6050::setYGyroOffsetTC(int8_t offset);
+		int8_t MPU6050::getZGyroOffsetTC();
+		void MPU6050::setZGyroOffsetTC(int8_t offset);
+		void MPU6050::setSlaveAddress(uint8_t num, uint8_t address);
+		void MPU6050::setI2CMasterModeEnabled(bool enabled);
+		void MPU6050::resetI2CMaster();
+		bool MPU6050::writeProgMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address, bool verify);
+		bool MPU6050::writeMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address, bool verify, bool useProgMem);
+		bool MPU6050::writeProgDMPConfigurationSet(const uint8_t *data, uint16_t dataSize);
+		bool MPU6050::writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bool useProgMem);
+		void MPU6050::setClockSource(uint8_t source);
+		void MPU6050::setIntEnabled(uint8_t enabled);
+		void MPU6050::setRate(uint8_t rate);
+		void MPU6050::setExternalFrameSync(uint8_t sync);
+		void MPU6050::setDLPFMode(uint8_t mode);
+		void MPU6050::setFullScaleGyroRange(uint8_t range);
+		void MPU6050::setDMPConfig1(uint8_t config);
+		void MPU6050::setDMPConfig2(uint8_t config);
+		void MPU6050::setOTPBankValid(bool enabled);
+		void MPU6050::resetFIFO();
+		uint16_t MPU6050::getFIFOCount();
+		void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length);
+		void MPU6050::setMotionDetectionThreshold(uint8_t threshold);
+		void MPU6050::setZeroMotionDetectionThreshold(uint8_t threshold);
+		uint8_t MPU6050::getZeroMotionDetectionDuration();
+		void MPU6050::setZeroMotionDetectionDuration(uint8_t duration);
+		void MPU6050::setFIFOEnabled(bool enabled);
+		void MPU6050::setDMPEnabled(bool enabled);
+		void MPU6050::resetDMP();
+		uint8_t MPU6050::getIntStatus();
 
     private:
         I2cPort *i2c;
