@@ -4,8 +4,6 @@
 #include "I2cPort.h"
 #include "helper_3dmath.h"
 #include "AllDevices.h"
-#include "MPU6050.h"
-
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
 #define INCLUDE_DMP_MOTIONAPPS20
 

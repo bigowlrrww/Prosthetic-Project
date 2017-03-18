@@ -1,3 +1,4 @@
+#include "DMP-processing.h"
 /* Source is from the InvenSense MotionApps v2 demo code. Original source is
  * unavailable, unless you happen to be amazing as decompiling binary by
  * hand (in which case, please contact me, and I'm totally serious).
