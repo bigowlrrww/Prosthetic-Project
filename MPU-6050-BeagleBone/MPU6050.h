@@ -142,7 +142,7 @@
 #define USERCTRL_DMP_RESET_BIT          3
 #define RA_INT_STATUS       			0x3A
 #define RA_ZA_OFFS_H        			0x0A
-
+#define DLPF_BW_42          			0x03
 
 using namespace cacaosd_i2cport;
 
