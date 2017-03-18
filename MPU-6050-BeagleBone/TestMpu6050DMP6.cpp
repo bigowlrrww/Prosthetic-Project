@@ -131,7 +131,7 @@ int main() {
 		}
 		
 		// if programming failed, don't try to do anything
-		if (!dmpReady) return;
+		if (!dmpReady) return 1;
 
 		// wait for MPU interrupt or extra packet(s) available
 		while (!mpuInterrupt && fifoCount < packetSize) {
