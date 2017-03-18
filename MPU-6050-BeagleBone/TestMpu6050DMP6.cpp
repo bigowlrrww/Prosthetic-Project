@@ -1,9 +1,8 @@
 #include "AllDevices.h"
 #include "DMP-processing.h"
-#define MPU6050 mpu
+
 using namespace cacaosd_i2cport;
 using namespace cacaosd_mpu6050;
-
 int ctrl;
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
@@ -70,8 +69,9 @@ int main() {
     I2cPort *i2c = new I2cPort(0x68, 1);
     i2c->openConnection();
 
-    mpu *mpu6050 = new mpu(i2c);
-    mpu->initialize();
+    MPU6050 *mpu6050 = new MPU6050(i2c);
+    mpu6050->initialize();
+	MPU6050DMP *mpu6050dmp = new MPU6050DMP(i2c);
 
     /*float k = 16000;
     int16_t *accels = (int16_t *) calloc(3, sizeof(int16_t));
@@ -79,12 +79,12 @@ int main() {
     while (ctrl) {
         std::cout << "MPU6050" << std::endl;
 
-        mpu->getAccelerations(accels);
+        mpu6050->getAccelerations(accels);
         std::cout << "Accel X: " << (float) accels[0] / k << std::endl;
         std::cout << "Accel Y: " << (float) accels[1] / k << std::endl;
         std::cout << "Accel Z: " << (float) accels[2] / k << std::endl;
 
-        mpu->getAngularVelocities(gyros);
+        mpu6050->getAngularVelocities(gyros);
         std::cout << "Gyro X: " << (float) gyros[0] / k << std::endl;
         std::cout << "Gyro Y: " << (float) gyros[1] / k << std::endl;
         std::cout << "Gyro Z: " << (float) gyros[2] / k << std::endl;
@@ -95,31 +95,31 @@ int main() {
 	while (ctrl) {
 		// load and configure the DMP
 		std::cout << "Initializing DMP..." << std::endl;
-		devStatus = mpu.dmpInitialize();
+		devStatus = mpu6050dmp.dmpInitialize();
 
 		// supply your own gyro offsets here, scaled for min sensitivity
-		mpu.setXGyroOffset(220);
-		mpu.setYGyroOffset(76);
-		mpu.setZGyroOffset(-85);
-		mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+		mpu6050.setXGyroOffsetTC(220);
+		mpu6050.setYGyroOffsetTC(76);
+		mpu6050.setZGyroOffsetTC(-85);
+		mpu6050.setZAccelOffsetTC(1788); // 1688 factory default for my test chip
 
 		// make sure it worked (returns 0 if so)
 		if (devStatus == 0) {
 			// turn on the DMP, now that it's ready
 			std::cout << "Enabling DMP..." << std::endl;
-			mpu.setDMPEnabled(true);
+			mpu6050.setDMPEnabled(true);
 
 			// TODO enable Beaglebone interrupt detection
 			/*std::cout << "Enabling interrupt detection (Arduino external interrupt 0)..." << std::endl;
 			attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-			mpuIntStatus = mpu.getIntStatus();*/
+			mpuIntStatus = mpu6050.getIntStatus();*/
 
 			// set our DMP Ready flag so the main loop() function knows it's okay to use it
 			std::cout << "DMP ready! Waiting for first interrupt..." << std::endl;
 			dmpReady = true;
 
 			// get expected DMP packet size for later comparison
-			packetSize = mpu.dmpGetFIFOPacketSize();
+			packetSize = mpu6050dmp.dmpGetFIFOPacketSize();
 		} else {
 			// ERROR!
 			// 1 = initial memory load failed
@@ -149,24 +149,24 @@ int main() {
 
 		// reset interrupt flag and get INT_STATUS byte
 		mpuInterrupt = false;
-		mpuIntStatus = mpu.getIntStatus();
+		mpuIntStatus = mpu6050.getIntStatus();
 
 		// get current FIFO count
-		fifoCount = mpu.getFIFOCount();
+		fifoCount = mpu6050.getFIFOCount();
 
 		// check for overflow (this should never happen unless our code is too inefficient)
 		if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
 			// reset so we can continue cleanly
-			mpu.resetFIFO();
+			mpu6050.resetFIFO();
 			std::cout << "FIFO overflow!" << std::endl;
 
 		// otherwise, check for DMP data ready interrupt (this should happen frequently)
 		} else if (mpuIntStatus & 0x02) {
 			// wait for correct available data length, should be a VERY short wait
-			while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+			while (fifoCount < packetSize) fifoCount = mpu6050.getFIFOCount();
 
 			// read a packet from FIFO
-			mpu.getFIFOBytes(fifoBuffer, packetSize);
+			mpu6050.getFIFOBytes(fifoBuffer, packetSize);
 			
 			// track FIFO count here in case there is > 1 packet available
 			// (this lets us immediately read more without waiting for an interrupt)
@@ -174,7 +174,7 @@ int main() {
 
 			#ifdef OUTPUT_READABLE_QUATERNION
 				// display quaternion values in easy matrix form: w x y z
-				mpu.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
 				std::cout << "quat\t";
 				std::cout << q.w;
 				std::cout << "\t";
@@ -187,8 +187,8 @@ int main() {
 
 			#ifdef OUTPUT_READABLE_EULER
 				// display Euler angles in degrees
-				mpu.dmpGetQuaternion(&q, fifoBuffer);
-				mpu.dmpGetEuler(euler, &q);
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetEuler(euler, &q);
 				std::cout << "euler\t";
 				std::cout << euler[0] * 180/M_PI;
 				std::cout << "\t";
@@ -199,9 +199,9 @@ int main() {
 
 			#ifdef OUTPUT_READABLE_YAWPITCHROLL
 				// display Euler angles in degrees
-				mpu.dmpGetQuaternion(&q, fifoBuffer);
-				mpu.dmpGetGravity(&gravity, &q);
-				mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetGravity(&gravity, &q);
+				mpu6050dmp.dmpGetYawPitchRoll(ypr, &q, &gravity);
 				std::cout << "ypr\t";
 				std::cout << ypr[0] * 180/M_PI;
 				std::cout << "\t";
@@ -212,10 +212,10 @@ int main() {
 
 			#ifdef OUTPUT_READABLE_REALACCEL
 				// display real acceleration, adjusted to remove gravity
-				mpu.dmpGetQuaternion(&q, fifoBuffer);
-				mpu.dmpGetAccel(&aa, fifoBuffer);
-				mpu.dmpGetGravity(&gravity, &q);
-				mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
+				mpu6050dmp.dmpGetGravity(&gravity, &q);
+				mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
 				std::cout << "areal\t";
 				std::cout << aaReal.x;
 				std::cout << "\t";
@@ -227,11 +227,11 @@ int main() {
 			#ifdef OUTPUT_READABLE_WORLDACCEL
 				// display initial world-frame acceleration, adjusted to remove gravity
 				// and rotated based on known orientation from quaternion
-				mpu.dmpGetQuaternion(&q, fifoBuffer);
-				mpu.dmpGetAccel(&aa, fifoBuffer);
-				mpu.dmpGetGravity(&gravity, &q);
-				mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-				mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
+				mpu6050dmp.dmpGetGravity(&gravity, &q);
+				mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+				mpu6050dmp.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 				std::cout << "aworld\t";
 				std::cout << aaWorld.x;
 				std::cout << "\t";
@@ -255,8 +255,6 @@ int main() {
 			#endif
 		}
 	}
-    free(accels);
-    free(gyros);
     i2c->closeConnection();
     delete i2c, mpu6050;
 
