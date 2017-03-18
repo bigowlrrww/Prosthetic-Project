@@ -222,9 +222,10 @@ MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
 	this->i2c = i2c;
 }
 using namespace cacaosd_mpu6050;
-    
+    MPU6050 *mpu6050;
 	uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 		// reset device
+		*mpu6050 = *mpu6050;
 		DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
 		mpu6050->reset();
 		usleep(30000); // wait after reset
@@ -343,7 +344,7 @@ using namespace cacaosd_mpu6050;
 				mpu6050->resetFIFO();
 
 				DEBUG_PRINTLN(F("Reading FIFO count..."));
-				uint16_t fifoCount = getFIFOCount();
+				uint16_t fifoCount = mpu6050->getFIFOCount();
 				uint8_t fifoBuffer[128];
 
 				DEBUG_PRINT(F("Current FIFO count="));
@@ -397,7 +398,7 @@ using namespace cacaosd_mpu6050;
 				DEBUG_PRINTLN(F("Reading interrupt status..."));
 
 				DEBUG_PRINT(F("Current interrupt status="));
-				DEBUG_PRINTLNF(getIntStatus(), HEX);
+				DEBUG_PRINTLN(mpu6050->getIntStatus());
 
 				DEBUG_PRINTLN(F("Reading final memory update 6/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
