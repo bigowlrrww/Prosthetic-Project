@@ -141,6 +141,7 @@
 #define USERCTRL_DMP_EN_BIT             7
 #define USERCTRL_DMP_RESET_BIT          3
 #define RA_INT_STATUS       			0x3A
+#define RA_ZA_OFFS_H        			0x0A
 
 
 using namespace cacaosd_i2cport;

@@ -70,6 +70,7 @@ namespace cacaosd_i2cport {
         void writeByte(uint8_t DATA_REGADD, uint8_t data);
 
         void writeByteBuffer(uint8_t DATA_REGADD, uint8_t *data, uint8_t length);
+		void writeWord(uint8_t DATA_REGADD, uint8_t *data, uint8_t length);
 
         void writeByteArduino(int8_t data);
 

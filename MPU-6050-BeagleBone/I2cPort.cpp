@@ -218,7 +218,30 @@ namespace cacaosd_i2cport {
         }
 
     }
-
+	void I2cPort::writeWord(uint8_t DATA_REGADD, uint8_t *data,
+							   uint8_t length) {
+		uint8_t buffer[1];
+		buffer[0] = DATA_REGADD;
+		
+			
+        for (uint8_t i = 0; i < length * 2; i++) {
+			if (write(this->file_descriptor, buffer, 1) != 1) {
+				msg_error("Can not write data. Address %d.", device_address);
+			}
+			
+			if (write(this->file_descriptor, (uint8_t)(data[i] >> 8), length) != length) {
+				msg_error("Can not write data. Address %d.", device_address);
+			}
+			
+			if (write(this->file_descriptor, buffer, 1) != 1) {
+				msg_error("Can not write data. Address %d.", device_address);
+			}
+			
+			if (write(this->file_descriptor, (uint8_t)(data[i++]), length) != length) {
+				msg_error("Can not write data. Address %d.", device_address);
+			}
+		}
+    }
 /**
  * @function writeByteArduino(uint8_t dev_addr, int8_t data)
  * @param dev_addr Arduino Device Address.
