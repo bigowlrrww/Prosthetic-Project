@@ -430,9 +430,9 @@ using namespace cacaosd_mpu6050;
 
 				DEBUG_PRINTLN(F("Setting up internal 42-byte (default) DMP packet buffer..."));
 				dmpPacketSize = 42;
-				/*if ((dmpPacketBuffer = (uint8_t *)malloc(42)) == 0) {
+				if ((dmpPacketBuffer = (uint8_t *)malloc(42)) == 0) {
 					return 3; // TODO: proper error code for no memory
-				}*/
+				}
 
 				DEBUG_PRINTLN(F("Resetting FIFO and clearing INT status one last time..."));
 				mpu6050->resetFIFO();
