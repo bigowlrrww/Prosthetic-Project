@@ -85,7 +85,7 @@ namespace cacaosd_mpu6050{
     public:
 		MPU6050DMP(I2cPort *i2c);
 		
-		uint8_t dmpInitialize();
+		uint8_t dmpInitialize(MPU6050 *mpu6050);
 
 		bool dmpPacketAvailable();
 

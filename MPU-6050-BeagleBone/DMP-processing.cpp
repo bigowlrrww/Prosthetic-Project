@@ -218,10 +218,11 @@ const unsigned char dmpUpdates[DMP_UPDATES_SIZE] PROGMEM = {
     0x01,   0x62,   0x02,   0x00, 0x00,
     0x00,   0x60,   0x04,   0x00, 0x40, 0x00, 0x00
 };
-namespace cacaosd_mpu6050 {
-    MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
-        this->i2c = i2c;
-    }
+MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
+	this->i2c = i2c;
+}
+using namespace cacaosd_mpu6050;
+    
 	uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 		// reset device
 		DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
