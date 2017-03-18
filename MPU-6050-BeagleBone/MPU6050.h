@@ -287,7 +287,9 @@ namespace cacaosd_mpu6050 {
 		void setDMPEnabled(bool enabled);
 		void resetDMP();
 		uint8_t getIntStatus();
-
+		int16_t getZAccelOffsetTC();
+		void setZAccelOffsetTC(int16_t offset);
+		
     private:
         I2cPort *i2c;
         uint8_t device_address;
