@@ -95,19 +95,19 @@ int main() {
 	while (ctrl) {
 		// load and configure the DMP
 		std::cout << "Initializing DMP..." << std::endl;
-		devStatus = mpu6050dmp.dmpInitialize();
+		devStatus = mpu6050dmp->dmpInitialize();
 
 		// supply your own gyro offsets here, scaled for min sensitivity
-		mpu6050.setXGyroOffsetTC(220);
-		mpu6050.setYGyroOffsetTC(76);
-		mpu6050.setZGyroOffsetTC(-85);
-		mpu6050.setZAccelOffsetTC(1788); // 1688 factory default for my test chip
+		mpu6050->setXGyroOffsetTC(220);
+		mpu6050->setYGyroOffsetTC(76);
+		mpu6050->setZGyroOffsetTC(-85);
+		mpu6050->setZAccelOffsetTC(1788); // 1688 factory default for my test chip
 
 		// make sure it worked (returns 0 if so)
 		if (devStatus == 0) {
 			// turn on the DMP, now that it's ready
 			std::cout << "Enabling DMP..." << std::endl;
-			mpu6050.setDMPEnabled(true);
+			mpu6050->setDMPEnabled(true);
 
 			// TODO enable Beaglebone interrupt detection
 			/*std::cout << "Enabling interrupt detection (Arduino external interrupt 0)..." << std::endl;
@@ -119,7 +119,7 @@ int main() {
 			dmpReady = true;
 
 			// get expected DMP packet size for later comparison
-			packetSize = mpu6050dmp.dmpGetFIFOPacketSize();
+			packetSize = mpu6050dmp->dmpGetFIFOPacketSize();
 		} else {
 			// ERROR!
 			// 1 = initial memory load failed
@@ -149,24 +149,24 @@ int main() {
 
 		// reset interrupt flag and get INT_STATUS byte
 		mpuInterrupt = false;
-		mpuIntStatus = mpu6050.getIntStatus();
+		mpuIntStatus = mpu6050->getIntStatus();
 
 		// get current FIFO count
-		fifoCount = mpu6050.getFIFOCount();
+		fifoCount = mpu6050->getFIFOCount();
 
 		// check for overflow (this should never happen unless our code is too inefficient)
 		if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
 			// reset so we can continue cleanly
-			mpu6050.resetFIFO();
+			mpu6050->resetFIFO();
 			std::cout << "FIFO overflow!" << std::endl;
 
 		// otherwise, check for DMP data ready interrupt (this should happen frequently)
 		} else if (mpuIntStatus & 0x02) {
 			// wait for correct available data length, should be a VERY short wait
-			while (fifoCount < packetSize) fifoCount = mpu6050.getFIFOCount();
+			while (fifoCount < packetSize) fifoCount = mpu6050->getFIFOCount();
 
 			// read a packet from FIFO
-			mpu6050.getFIFOBytes(fifoBuffer, packetSize);
+			mpu6050->getFIFOBytes(fifoBuffer, packetSize);
 			
 			// track FIFO count here in case there is > 1 packet available
 			// (this lets us immediately read more without waiting for an interrupt)
@@ -199,9 +199,9 @@ int main() {
 
 			#ifdef OUTPUT_READABLE_YAWPITCHROLL
 				// display Euler angles in degrees
-				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
-				mpu6050dmp.dmpGetGravity(&gravity, &q);
-				mpu6050dmp.dmpGetYawPitchRoll(ypr, &q, &gravity);
+				mpu6050dmp->dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp->dmpGetGravity(&gravity, &q);
+				mpu6050dmp->dmpGetYawPitchRoll(ypr, &q, &gravity);
 				std::cout << "ypr\t";
 				std::cout << ypr[0] * 180/M_PI;
 				std::cout << "\t";
