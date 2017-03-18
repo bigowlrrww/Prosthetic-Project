@@ -290,7 +290,7 @@ namespace cacaosd_mpu6050 {
 		int16_t getZAccelOffsetTC();
 		void setZAccelOffsetTC(int16_t offset);
 		// special methods for MotionApps 2.0 implementation
-        #ifdef MPU6050_INCLUDE_DMP_MOTIONAPPS20
+        #ifdef INCLUDE_DMP_MOTIONAPPS20
             uint8_t *dmpPacketBuffer;
             uint16_t dmpPacketSize;
 
