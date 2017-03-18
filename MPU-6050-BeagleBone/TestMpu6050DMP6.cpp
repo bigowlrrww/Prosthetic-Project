@@ -96,7 +96,7 @@ int main() {
 	while (ctrl) {
 		// load and configure the DMP
 		std::cout << "Initializing DMP..." << std::endl;
-		devStatus = mpu6050dmp->dmpInitialize();
+		devStatus = mpu6050dmp->dmpInitialize(mpu6050);
 
 		// supply your own gyro offsets here, scaled for min sensitivity
 		mpu6050->setXGyroOffsetTC(220);
