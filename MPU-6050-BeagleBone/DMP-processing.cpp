@@ -643,4 +643,3 @@ namespace cacaosd_mpu6050 {
 		return dmpPacketSize;
 	}
 }
-#endif /* _6AXIS_MOTIONAPPS20_H_ */

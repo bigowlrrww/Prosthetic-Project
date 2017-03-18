@@ -3,7 +3,6 @@
 
 using namespace cacaosd_i2cport;
 using namespace cacaosd_mpu6050;
-int ctrl;
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
 // quaternion components in a [w, x, y, z] format (not best for parsing
@@ -40,6 +39,8 @@ int ctrl;
 // format used for the InvenSense teapot demo
 //#define OUTPUT_TEAPOT
 
+
+int ctrl;
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -257,4 +258,5 @@ int main() {
     i2c->closeConnection();
     delete i2c, mpu6050;
     return 0;
+}
 }
