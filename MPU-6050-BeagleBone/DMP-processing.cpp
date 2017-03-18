@@ -246,14 +246,14 @@ using namespace cacaosd_mpu6050;
 		mpu6050->setMemoryStartAddress(0x06);
 		DEBUG_PRINTLN(F("Checking hardware revision..."));
 		DEBUG_PRINT(F("Revision @ user[16][6] = "));
-		DEBUG_PRINTL(mpu6050->readMemoryByte());
+		DEBUG_PRINTLN(mpu6050->readMemoryByte());
 		DEBUG_PRINTLN(F("Resetting memory bank selection to 0..."));
 		mpu6050->setMemoryBank(0, false, false);
 
 		// check OTP bank valid
 		DEBUG_PRINTLN(F("Reading OTP bank valid flag..."));
 		DEBUG_PRINT(F("OTP bank is "));
-		DEBUG_PRINTLN(mpu6050->getOTPBankValid() ? F("valid!") : F("invalid!"));
+		DEBUG_PRINTLN(mpu6050->getOTPBankValid());
 
 		// get X/Y/Z gyro offsets
 		DEBUG_PRINTLN(F("Reading gyro offset TC values..."));
@@ -282,7 +282,7 @@ using namespace cacaosd_mpu6050;
 		DEBUG_PRINT(F("Writing DMP code to MPU memory banks ("));
 		DEBUG_PRINT(DMP_CODE_SIZE);
 		DEBUG_PRINTLN(F(" bytes)"));
-		if (mpu6050->writeProgMemoryBlock(dmpMemory, DMP_CODE_SIZE)) {
+		if (mpu6050->writeProgMemoryBlock(dmpMemory, DMP_CODE_SIZE, 0, 0, false)) {
 			DEBUG_PRINTLN(F("Success! DMP code written and verified."));
 
 			// write DMP configuration
