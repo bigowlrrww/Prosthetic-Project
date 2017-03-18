@@ -223,6 +223,7 @@ MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
 }
 using namespace cacaosd_mpu6050;
     MPU6050 *mpu6050;
+	int dmpPacketSize;
 	uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 		// reset device
 		*mpu6050 = *mpu6050;
@@ -388,7 +389,7 @@ using namespace cacaosd_mpu6050;
 				mpu6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
-				while ((fifoCount = getFIFOCount()) < 3);
+				while ((fifoCount = mpu6050->getFIFOCount()) < 3);
 
 				DEBUG_PRINT(F("Current FIFO count="));
 				DEBUG_PRINTLN(fifoCount);
@@ -405,7 +406,7 @@ using namespace cacaosd_mpu6050;
 				mpu6050->readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
 				DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
-				while ((fifoCount = getFIFOCount()) < 3);
+				while ((fifoCount = mpu6050->getFIFOCount()) < 3);
 
 				DEBUG_PRINT(F("Current FIFO count="));
 				DEBUG_PRINTLN(fifoCount);
@@ -416,7 +417,7 @@ using namespace cacaosd_mpu6050;
 				DEBUG_PRINTLN(F("Reading interrupt status..."));
 
 				DEBUG_PRINT(F("Current interrupt status="));
-				DEBUG_PRINTLNF(getIntStatus(), HEX);
+				DEBUG_PRINTLN(getIntStatus());
 
 				DEBUG_PRINTLN(F("Writing final memory update 7/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
@@ -568,7 +569,7 @@ using namespace cacaosd_mpu6050;
 	uint8_t MPU6050DMP::dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q) {
 		// rotate measured 3D acceleration vector into original state
 		// frame of reference based on orientation quaternion
-		memcpy(v, vReal, sizeof(VectorInt16));
+		std::memcpy(v, vReal, sizeof(VectorInt16));
 		v -> rotate(q);
 		return 0;
 	}
@@ -622,7 +623,7 @@ using namespace cacaosd_mpu6050;
 		uint8_t buf[dmpPacketSize];
 		for (uint8_t i = 0; i < numPackets; i++) {
 			// read packet from FIFO
-			getFIFOBytes(buf, dmpPacketSize);
+			mpu6050->getFIFOBytes(buf, dmpPacketSize);
 
 			// process packet
 			if ((status = dmpProcessFIFOPacket(buf)) > 0) return status;
