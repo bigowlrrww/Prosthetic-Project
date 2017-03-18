@@ -1,6 +1,8 @@
 #ifndef _6AXIS_MOTIONAPPS20_H_
 #define _6AXIS_MOTIONAPPS20_H_
 
+#include <stdio.h>
+#include <string.h>
 #include "I2cPort.h"
 #include "helper_3dmath.h"
 #include "AllDevices.h"

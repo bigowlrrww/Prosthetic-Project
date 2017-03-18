@@ -417,7 +417,7 @@ using namespace cacaosd_mpu6050;
 				DEBUG_PRINTLN(F("Reading interrupt status..."));
 
 				DEBUG_PRINT(F("Current interrupt status="));
-				DEBUG_PRINTLN(getIntStatus());
+				DEBUG_PRINTLN(mpu6050->getIntStatus());
 
 				DEBUG_PRINTLN(F("Writing final memory update 7/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
@@ -449,7 +449,7 @@ using namespace cacaosd_mpu6050;
 	}
 
 	bool MPU6050DMP::dmpPacketAvailable() {
-		return mpu6050->getFIFOCount() >= mpu6050->dmpGetFIFOPacketSize();
+		return mpu6050->getFIFOCount() >= dmpGetFIFOPacketSize();
 	}
 
 	// uint8_t MPU6050DMP::dmpSetFIFORate(uint8_t fifoRate);
@@ -569,7 +569,7 @@ using namespace cacaosd_mpu6050;
 	uint8_t MPU6050DMP::dmpGetLinearAccelInWorld(VectorInt16 *v, VectorInt16 *vReal, Quaternion *q) {
 		// rotate measured 3D acceleration vector into original state
 		// frame of reference based on orientation quaternion
-		std::memcpy(v, vReal, sizeof(VectorInt16));
+		memcpy(v, vReal, sizeof(VectorInt16));
 		v -> rotate(q);
 		return 0;
 	}
