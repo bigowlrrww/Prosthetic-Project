@@ -10,7 +10,6 @@
 #define INCLUDE_DMP_MOTIONAPPS20
 
 
-
 // Tom Carpenter's conditional PROGMEM code
 // http://forum.arduino.cc/index.php?topic=129407.0
 // Teensy 3.0 library conditional PROGMEM code from Paul Stoffregen

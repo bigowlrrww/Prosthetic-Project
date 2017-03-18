@@ -289,6 +289,9 @@ namespace cacaosd_mpu6050 {
 		uint8_t getIntStatus();
 		int16_t getZAccelOffsetTC();
 		void setZAccelOffsetTC(int16_t offset);
+		void setMotionDetectionDuration(uint8_t duration);
+		void readMemoryBlock(uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address);
+		
 		// special methods for MotionApps 2.0 implementation
         #ifdef INCLUDE_DMP_MOTIONAPPS20
             uint8_t *dmpPacketBuffer;
