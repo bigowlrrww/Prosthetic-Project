@@ -1,9 +1,9 @@
 #include "AllDevices.h"
 #include "DMP-processing.h"
-
+#define MPU6050 mpu
 using namespace cacaosd_i2cport;
 using namespace cacaosd_mpu6050;
-#define MPU6050 mpu
+
 int ctrl;
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual

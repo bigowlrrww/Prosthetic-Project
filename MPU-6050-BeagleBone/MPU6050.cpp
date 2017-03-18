@@ -445,19 +445,22 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	uint8_t MPU6050::readMemoryByte() {
+		int8_t buffer;
 		buffer = i2c->readByte(RA_MEM_R_W);
-		return buffer[0];
+		return buffer;
 	}
 	
 	uint8_t MPU6050::getOTPBankValid() {
-		i2c->readBit(RA_XG_OFFS_TC, buffer, TC_OTP_BNK_VLD_BIT);
-		return buffer[0];
+		int8_t buffer;
+		buffer = i2c->readBit(RA_XG_OFFS_TC, TC_OTP_BNK_VLD_BIT);
+		return buffer;
 	}
 	
 	//XGyro VAL
 	int8_t MPU6050::getXGyroOffsetTC() {
+		int8_t buffer;
 		buffer = i2c->readMoreBits(RA_XG_OFFS_TC, TC_OFFSET_LENGTH, TC_OFFSET_BIT);
-		return buffer[0];
+		return buffer;
 	}
 	
 	void MPU6050::setXGyroOffsetTC(int8_t offset) {
@@ -466,8 +469,9 @@ namespace cacaosd_mpu6050 {
 	
 	//YGyro VAL
 	int8_t MPU6050::getYGyroOffsetTC() {
+		int8_t buffer;
 		buffer = i2c->readMoreBits(RA_YG_OFFS_TC, TC_OFFSET_LENGTH, TC_OFFSET_BIT);
-		return buffer[0];
+		return buffer;
 	}
 	
 	void MPU6050::setYGyroOffsetTC(int8_t offset) {
@@ -476,8 +480,9 @@ namespace cacaosd_mpu6050 {
 	
 	//ZGyro VAL
 	int8_t MPU6050::getZGyroOffsetTC() {
+		int8_t buffer;
 		buffer = i2c->readMoreBits(RA_ZG_OFFS_TC, TC_OFFSET_LENGTH, TC_OFFSET_BIT);
-		return buffer[0];
+		return buffer;
 	}
 	
 	void MPU6050::setZGyroOffsetTC(int8_t offset) {
@@ -499,11 +504,11 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	bool MPU6050::writeProgMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address, bool verify) {
-		return writeMemoryBlock(data, dataSize, bank, address, verify, true);
+		return writeMemoryBlock(data, dataSize, bank, address, verify, false);
 	}
 	
 	bool MPU6050::writeMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address, bool verify, bool useProgMem) {
-		setMemoryBank(bank);
+		setMemoryBank(bank, false, false);
 		setMemoryStartAddress(address);
 		uint8_t chunkSize;
 		uint8_t *verifyBuffer;
@@ -524,7 +529,7 @@ namespace cacaosd_mpu6050 {
 			
 			if (useProgMem) {
 				// write the chunk of data as specified
-				for (j = 0; j < chunkSize; j++) progBuffer[j] = pgm_read_byte(data + i + j);
+				//for (j = 0; j < chunkSize; j++) progBuffer[j] = pgm_read_byte(data + i + j);
 			} else {
 				// write the chunk of data as specified
 				progBuffer = (uint8_t *)data + i;
@@ -534,10 +539,10 @@ namespace cacaosd_mpu6050 {
 
 			// verify data if needed
 			if (verify && verifyBuffer) {
-				setMemoryBank(bank);
+				setMemoryBank(bank, false, false);
 				setMemoryStartAddress(address);
 				i2c->readByteBuffer(RA_MEM_R_W, verifyBuffer, chunkSize);
-				if (memcmp(progBuffer, verifyBuffer, chunkSize) != 0) {
+				//if (memcmp(progBuffer, verifyBuffer, chunkSize) != 0) {
 					/*Serial.print("Block write verification error, bank ");
 					Serial.print(bank, DEC);
 					Serial.print(", address ");
@@ -555,10 +560,10 @@ namespace cacaosd_mpu6050 {
 						Serial.print(verifyBuffer[i + j], HEX);
 					}
 					Serial.print("\n");*/
-					free(verifyBuffer);
-					if (useProgMem) free(progBuffer);
-					return false; // uh oh.
-				}
+					//free(verifyBuffer);
+					//if (useProgMem) free(progBuffer);
+					//return false; // uh oh.
+				//}
 			}
 
 			// increase byte index by [chunkSize]
@@ -570,7 +575,7 @@ namespace cacaosd_mpu6050 {
 			// if we aren't done, update bank (if necessary) and address
 			if (i < dataSize) {
 				if (address == 0) bank++;
-				setMemoryBank(bank);
+				setMemoryBank(bank, false, false);
 				setMemoryStartAddress(address);
 			}
 		}
@@ -580,7 +585,7 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	bool MPU6050::writeProgDMPConfigurationSet(const uint8_t *data, uint16_t dataSize) {
-		return writeDMPConfigurationSet(data, dataSize, true);
+		return writeDMPConfigurationSet(data, dataSize, false);
 	}
 	
 	bool MPU6050::writeDMPConfigurationSet(const uint8_t *data, uint16_t dataSize, bool useProgMem) {
@@ -595,9 +600,9 @@ namespace cacaosd_mpu6050 {
 		uint8_t bank, offset, length;
 		for (i = 0; i < dataSize;) {
 			if (useProgMem) {
-				bank = pgm_read_byte(data + i++);
-				offset = pgm_read_byte(data + i++);
-				length = pgm_read_byte(data + i++);
+				//bank = pgm_read_byte(data + i++);
+				//offset = pgm_read_byte(data + i++);
+				//length = pgm_read_byte(data + i++);
 			} else {
 				bank = data[i++];
 				offset = data[i++];
@@ -614,12 +619,12 @@ namespace cacaosd_mpu6050 {
 				Serial.print(", length=");
 				Serial.println(length);*/
 				if (useProgMem) {
-					if (sizeof(progBuffer) < length) progBuffer = (uint8_t *)realloc(progBuffer, length);
-					for (j = 0; j < length; j++) progBuffer[j] = pgm_read_byte(data + i + j);
+					//if (sizeof(progBuffer) < length) progBuffer = (uint8_t *)realloc(progBuffer, length);
+					//for (j = 0; j < length; j++) progBuffer[j] = pgm_read_byte(data + i + j);
 				} else {
 					progBuffer = (uint8_t *)data + i;
 				}
-				success = writeMemoryBlock(progBuffer, length, bank, offset, true);
+				success = writeMemoryBlock(progBuffer, length, bank, offset, true, false);
 				i += length;
 			} else {
 				// special instruction
@@ -628,7 +633,7 @@ namespace cacaosd_mpu6050 {
 				// behavior only, and exactly why (or even whether) it has to be here
 				// is anybody's guess for now.
 				if (useProgMem) {
-					special = pgm_read_byte(data + i++);
+					//special = pgm_read_byte(data + i++);
 				} else {
 					special = data[i++];
 				}
@@ -675,10 +680,6 @@ namespace cacaosd_mpu6050 {
 		i2c->writeMoreBits(RA_CONFIG, sync, CFG_EXT_SYNC_SET_LENGTH, CFG_EXT_SYNC_SET_BIT);
 	}
 	
-	void MPU6050::setDLPFMode(uint8_t mode) {
-		I2Cdev::writeMoreBits(RA_CONFIG, mode, CFG_DLPF_CFG_LENGTH, CFG_DLPF_CFG_BIT);
-	}
-	
 	void MPU6050::setFullScaleGyroRange(uint8_t range) {
 		i2c->writeMoreBits(RA_GYRO_CONFIG, range, GCONFIG_FS_SEL_LENGTH, GCONFIG_FS_SEL_BIT);
 	}
@@ -700,6 +701,7 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	uint16_t MPU6050::getFIFOCount() {
+		uint8_t buffer[2];
 		i2c->readByteBuffer(RA_FIFO_COUNTH, buffer, 2);
 		return (((uint16_t)buffer[0]) << 8) | buffer[1];
 	}
@@ -717,8 +719,9 @@ namespace cacaosd_mpu6050 {
 	}
 
 	uint8_t MPU6050::getZeroMotionDetectionDuration() {
+		int8_t buffer;
 		buffer = i2c->readByte(RA_ZRMOT_DUR);
-		return buffer[0];
+		return buffer;
 	}
 	
 	void MPU6050::setZeroMotionDetectionDuration(uint8_t duration) {
@@ -738,8 +741,9 @@ namespace cacaosd_mpu6050 {
 	}
 	
 	uint8_t MPU6050::getIntStatus() {
+		int8_t buffer;
 		buffer = i2c->readByte(RA_INT_STATUS);
-		return buffer[0];
+		return buffer;
 	}
 	
 	
