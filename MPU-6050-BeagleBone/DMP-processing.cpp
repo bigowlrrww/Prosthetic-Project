@@ -225,7 +225,7 @@ namespace cacaosd_mpu6050 {
 	uint8_t MPU6050DMP::dmpInitialize() {
 		// reset device
 		DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
-		reset();
+		MPU6050->reset();
 		usleep(30000); // wait after reset
 
 		// enable sleep mode and wake cycle
@@ -236,18 +236,18 @@ namespace cacaosd_mpu6050 {
 
 		// disable sleep mode
 		DEBUG_PRINTLN(F("Disabling sleep mode..."));
-		setSleepMode(false);
+		MPU6050->setSleepMode(false);
 
 		// get MPU hardware revision
 		DEBUG_PRINTLN(F("Selecting user bank 16..."));
-		setMemoryBank(0x10, true, true);
+		MPU6050->setMemoryBank(0x10, true, true);
 		DEBUG_PRINTLN(F("Selecting memory byte 6..."));
-		setMemoryStartAddress(0x06);
+		MPU6050->setMemoryStartAddress(0x06);
 		DEBUG_PRINTLN(F("Checking hardware revision..."));
 		DEBUG_PRINT(F("Revision @ user[16][6] = "));
 		DEBUG_PRINTLNF(readMemoryByte(), HEX);
 		DEBUG_PRINTLN(F("Resetting memory bank selection to 0..."));
-		setMemoryBank(0, false, false);
+		MPU6050->setMemoryBank(0, false, false);
 
 		// check OTP bank valid
 		DEBUG_PRINTLN(F("Reading OTP bank valid flag..."));
@@ -268,13 +268,13 @@ namespace cacaosd_mpu6050 {
 
 		// setup weird slave stuff (?)
 		DEBUG_PRINTLN(F("Setting slave 0 address to 0x7F..."));
-		setSlaveAddress(0, 0x7F);
+		MPU6050->setSlaveAddress(0, 0x7F);
 		DEBUG_PRINTLN(F("Disabling I2C Master mode..."));
-		setI2CMasterModeEnabled(false);
+		MPU6050->setI2CMasterModeEnabled(false);
 		DEBUG_PRINTLN(F("Setting slave 0 address to 0x68 (self)..."));
-		setSlaveAddress(0, 0x68);
+		MPU6050->setSlaveAddress(0, 0x68);
 		DEBUG_PRINTLN(F("Resetting I2C Master control..."));
-		resetI2CMaster();
+		MPU6050->resetI2CMaster();
 		usleep(20000);
 
 		// load DMP code into memory banks
@@ -292,36 +292,36 @@ namespace cacaosd_mpu6050 {
 				DEBUG_PRINTLN(F("Success! DMP configuration written and verified."));
 
 				DEBUG_PRINTLN(F("Setting clock source to Z Gyro..."));
-				setClockSource(CLOCK_PLL_ZGYRO);
+				MPU6050->setClockSource(CLOCK_PLL_ZGYRO);
 
 				DEBUG_PRINTLN(F("Setting DMP and FIFO_OFLOW interrupts enabled..."));
-				setIntEnabled(0x12);
+				MPU6050->setIntEnabled(0x12);
 
 				DEBUG_PRINTLN(F("Setting sample rate to 200Hz..."));
-				setRate(4); // 1khz / (1 + 4) = 200 Hz
+				MPU6050->setRate(4); // 1khz / (1 + 4) = 200 Hz
 
 				DEBUG_PRINTLN(F("Setting external frame sync to TEMP_OUT_L[0]..."));
-				setExternalFrameSync(EXT_SYNC_TEMP_OUT_L);
+				MPU6050->setExternalFrameSync(EXT_SYNC_TEMP_OUT_L);
 
 				DEBUG_PRINTLN(F("Setting DLPF bandwidth to 42Hz..."));
-				setDLPFMode(DLPF_BW_42);
+				MPU6050->setDLPFMode(DLPF_BW_42);
 
 				DEBUG_PRINTLN(F("Setting gyro sensitivity to +/- 2000 deg/sec..."));
-				setFullScaleGyroRange(GYRO_FS_2000);
+				MPU6050->setFullScaleGyroRange(GYRO_FS_2000);
 
 				DEBUG_PRINTLN(F("Setting DMP programm start address"));
 				//write start address MSB into register
-				setDMPConfig1(0x03);
+				MPU6050->setDMPConfig1(0x03);
 				//write start address LSB into register
-				setDMPConfig2(0x00);
+				MPU6050->setDMPConfig2(0x00);
 
 				DEBUG_PRINTLN(F("Clearing OTP Bank flag..."));
-				setOTPBankValid(false);
+				MPU6050->setOTPBankValid(false);
 
 				DEBUG_PRINTLN(F("Setting X/Y/Z gyro offset TCs to previous values..."));
-				setXGyroOffsetTC(xgOffsetTC);
-				setYGyroOffsetTC(ygOffsetTC);
-				setZGyroOffsetTC(zgOffsetTC);
+				MPU6050->setXGyroOffsetTC(xgOffsetTC);
+				MPU6050->setYGyroOffsetTC(ygOffsetTC);
+				MPU6050->setZGyroOffsetTC(zgOffsetTC);
 
 				//DEBUG_PRINTLN(F("Setting X/Y/Z gyro user offsets to zero..."));
 				//setXGyroOffset(0);
@@ -332,14 +332,14 @@ namespace cacaosd_mpu6050 {
 				uint8_t dmpUpdate[16], j;
 				uint16_t pos = 0;
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Writing final memory update 2/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Resetting FIFO..."));
-				resetFIFO();
+				MPU6050->resetFIFO();
 
 				DEBUG_PRINTLN(F("Reading FIFO count..."));
 				uint16_t fifoCount = getFIFOCount();
@@ -347,43 +347,43 @@ namespace cacaosd_mpu6050 {
 
 				DEBUG_PRINT(F("Current FIFO count="));
 				DEBUG_PRINTLN(fifoCount);
-				getFIFOBytes(fifoBuffer, fifoCount);
+				MPU6050->getFIFOBytes(fifoBuffer, fifoCount);
 
 				DEBUG_PRINTLN(F("Setting motion detection threshold to 2..."));
-				setMotionDetectionThreshold(2);
+				MPU6050->setMotionDetectionThreshold(2);
 
 				DEBUG_PRINTLN(F("Setting zero-motion detection threshold to 156..."));
-				setZeroMotionDetectionThreshold(156);
+				MPU6050->setZeroMotionDetectionThreshold(156);
 
 				DEBUG_PRINTLN(F("Setting motion detection duration to 80..."));
-				setMotionDetectionDuration(80);
+				MPU6050->setMotionDetectionDuration(80);
 
 				DEBUG_PRINTLN(F("Setting zero-motion detection duration to 0..."));
-				setZeroMotionDetectionDuration(0);
+				MPU6050->setZeroMotionDetectionDuration(0);
 
 				DEBUG_PRINTLN(F("Resetting FIFO..."));
-				resetFIFO();
+				MPU6050->resetFIFO();
 
 				DEBUG_PRINTLN(F("Enabling FIFO..."));
-				setFIFOEnabled(true);
+				MPU6050->setFIFOEnabled(true);
 
 				DEBUG_PRINTLN(F("Enabling DMP..."));
-				setDMPEnabled(true);
+				MPU6050->setDMPEnabled(true);
 
 				DEBUG_PRINTLN(F("Resetting DMP..."));
-				resetDMP();
+				MPU6050->resetDMP();
 
 				DEBUG_PRINTLN(F("Writing final memory update 3/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Writing final memory update 4/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Writing final memory update 5/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
 				while ((fifoCount = getFIFOCount()) < 3);
@@ -391,7 +391,7 @@ namespace cacaosd_mpu6050 {
 				DEBUG_PRINT(F("Current FIFO count="));
 				DEBUG_PRINTLN(fifoCount);
 				DEBUG_PRINTLN(F("Reading FIFO data..."));
-				getFIFOBytes(fifoBuffer, fifoCount);
+				MPU6050->getFIFOBytes(fifoBuffer, fifoCount);
 
 				DEBUG_PRINTLN(F("Reading interrupt status..."));
 
@@ -400,7 +400,7 @@ namespace cacaosd_mpu6050 {
 
 				DEBUG_PRINTLN(F("Reading final memory update 6/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
+				MPU6050->readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
 				DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
 				while ((fifoCount = getFIFOCount()) < 3);
@@ -409,7 +409,7 @@ namespace cacaosd_mpu6050 {
 				DEBUG_PRINTLN(fifoCount);
 
 				DEBUG_PRINTLN(F("Reading FIFO data..."));
-				getFIFOBytes(fifoBuffer, fifoCount);
+				MPU6050->getFIFOBytes(fifoBuffer, fifoCount);
 
 				DEBUG_PRINTLN(F("Reading interrupt status..."));
 
@@ -418,12 +418,12 @@ namespace cacaosd_mpu6050 {
 
 				DEBUG_PRINTLN(F("Writing final memory update 7/7 (function unknown)..."));
 				for (j = 0; j < 4 || j < dmpUpdate[2] + 3; j++, pos++) dmpUpdate[j] = pgm_read_byte(&dmpUpdates[pos]);
-				writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
+				MPU6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 				DEBUG_PRINTLN(F("DMP is good to go! Finally."));
 
 				DEBUG_PRINTLN(F("Disabling DMP (you turn it on later)..."));
-				setDMPEnabled(false);
+				MPU6050->setDMPEnabled(false);
 
 				DEBUG_PRINTLN(F("Setting up internal 42-byte (default) DMP packet buffer..."));
 				dmpPacketSize = 42;
@@ -432,8 +432,8 @@ namespace cacaosd_mpu6050 {
 				}*/
 
 				DEBUG_PRINTLN(F("Resetting FIFO and clearing INT status one last time..."));
-				resetFIFO();
-				getIntStatus();
+				MPU6050->resetFIFO();
+				MPU6050->getIntStatus();
 			} else {
 				DEBUG_PRINTLN(F("ERROR! DMP configuration verification failed."));
 				return 2; // configuration block loading failed
@@ -446,7 +446,7 @@ namespace cacaosd_mpu6050 {
 	}
 
 	bool MPU6050DMP::dmpPacketAvailable() {
-		return getFIFOCount() >= dmpGetFIFOPacketSize();
+		return MPU6050->getFIFOCount() >= MPU6050->dmpGetFIFOPacketSize();
 	}
 
 	// uint8_t MPU6050DMP::dmpSetFIFORate(uint8_t fifoRate);
