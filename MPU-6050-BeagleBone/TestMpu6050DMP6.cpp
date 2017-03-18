@@ -134,13 +134,13 @@ int main() {
 		if (!dmpReady) return 1;
 
 		// wait for MPU interrupt or extra packet(s) available
-		while (!mpuInterrupt && fifoCount < packetSize) {
+		while (fifoCount < packetSize) {
 			// other program behavior stuff here
 			// .
 			// .
 			// .
 			// if you are really paranoid you can frequently test in between other
-			// stuff to see if mpuInterrupt is true, and if so, "break;" from the
+			// stuff to "break;" from the
 			// while() loop to immediately process the MPU data
 			// .
 			// .
@@ -148,7 +148,6 @@ int main() {
 		}
 
 		// reset interrupt flag and get INT_STATUS byte
-		mpuInterrupt = false;
 		mpuIntStatus = mpu6050->getIntStatus();
 
 		// get current FIFO count
