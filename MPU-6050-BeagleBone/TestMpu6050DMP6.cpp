@@ -74,24 +74,24 @@ int main() {
 	MPU6050DMP *mpu6050dmp = new MPU6050DMP(i2c);
 
     /*float k = 16000;
-    int16_t *accels = (int16_t *) calloc(3, sizeof(int16_t));
-    int16_t *gyros = (int16_t *) calloc(3, sizeof(int16_t));
-    while (ctrl) {
-        std::cout << "MPU6050" << std::endl;
+    //int16_t *accels = (int16_t *) calloc(3, sizeof(int16_t));
+    //int16_t *gyros = (int16_t *) calloc(3, sizeof(int16_t));
+    //while (ctrl) {
+    //    std::cout << "MPU6050" << std::endl;
 
-        mpu6050->getAccelerations(accels);
-        std::cout << "Accel X: " << (float) accels[0] / k << std::endl;
-        std::cout << "Accel Y: " << (float) accels[1] / k << std::endl;
-        std::cout << "Accel Z: " << (float) accels[2] / k << std::endl;
+    //    mpu6050->getAccelerations(accels);
+    //    std::cout << "Accel X: " << (float) accels[0] / k << std::endl;
+    //    std::cout << "Accel Y: " << (float) accels[1] / k << std::endl;
+    //    std::cout << "Accel Z: " << (float) accels[2] / k << std::endl;
 
-        mpu6050->getAngularVelocities(gyros);
-        std::cout << "Gyro X: " << (float) gyros[0] / k << std::endl;
-        std::cout << "Gyro Y: " << (float) gyros[1] / k << std::endl;
-        std::cout << "Gyro Z: " << (float) gyros[2] / k << std::endl;
+    //   mpu6050->getAngularVelocities(gyros);
+    //   std::cout << "Gyro X: " << (float) gyros[0] / k << std::endl;
+    //   std::cout << "Gyro Y: " << (float) gyros[1] / k << std::endl;
+    //   std::cout << "Gyro Z: " << (float) gyros[2] / k << std::endl;
 
-        std::cout << "----------------------" << std::endl;
-        usleep(200000);
-    }*/
+    //   std::cout << "----------------------" << std::endl;
+    //   usleep(200000);
+    //}*/
 	while (ctrl) {
 		// load and configure the DMP
 		std::cout << "Initializing DMP..." << std::endl;
@@ -256,7 +256,5 @@ int main() {
 	}
     i2c->closeConnection();
     delete i2c, mpu6050;
-
     return 0;
 }
-
