@@ -1,5 +1,5 @@
-#ifndef _6AXIS_MOTIONAPPS20_H_
-#define _6AXIS_MOTIONAPPS20_H_
+#ifndef DMPPROCESSING_H
+#define DMPPROCESSING_H
 
 #include <stdio.h>
 #include <string.h>
