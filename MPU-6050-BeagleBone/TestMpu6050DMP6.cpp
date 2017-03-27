@@ -256,7 +256,7 @@ int main() {
 		}
 	}
     i2c->closeConnection();
-    delete i2c, mpu6050, mpu6050dmp;
+    delete i2c, mpu6050;
     return 0;
 }
 }
