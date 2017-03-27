@@ -22,7 +22,6 @@
 #include "MPU6050.h"
 #include "HMC5883L.h"
 #include "ADXL345.h"
-#include "DMP-processing.h"
 
 extern int ctrl;
 
