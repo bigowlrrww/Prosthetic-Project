@@ -1,4 +1,3 @@
-#include "AllDevices.h"
 #include "DMP-processing.h"
 
 using namespace cacaosd_i2cport;
@@ -40,7 +39,7 @@ using namespace cacaosd_mpu6050;
 //#define OUTPUT_TEAPOT
 
 
-int ctrl;
+
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -62,6 +61,7 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
+int ctrl;
 int main() {
 
     ctrl = 1;
