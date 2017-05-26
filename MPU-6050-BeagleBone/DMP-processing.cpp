@@ -207,14 +207,12 @@ MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
 	this->i2c = i2c;
 }
 using namespace cacaosd_mpu6050;
-    
-MPU6050 *mpu6050;
 int dmpPacketSize;
 uint8_t *dmpPacketBuffer;
-
+MPU6050 *mpu6050;
 uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 	// reset device
-	*mpu6050 = *mpu6050;
+	mpu6050 = mpu6050;
 	DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
 	mpu6050->reset();
 	usleep(30000); // wait after reset
