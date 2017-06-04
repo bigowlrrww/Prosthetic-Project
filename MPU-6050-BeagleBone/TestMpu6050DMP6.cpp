@@ -119,7 +119,7 @@ int main() {
 
 			// get expected DMP packet size for later comparison
 			packetSize = mpu6050dmp->dmpGetFIFOPacketSize();
-		}2 else {
+		} else {
 			// ERROR!
 			// 1 = initial memory load failed
 			// 2 = DMP configuration updates failed
@@ -159,7 +159,7 @@ int main() {
 			std::cout << "FIFO overflow!" << std::endl;
 
 		// otherwise, check for DMP data ready interrupt (this should happen frequently)
-		} else if (mpuIntStatus & 0x02) {3
+		} else if (mpuIntStatus & 0x02) {
 			// wait for correct available data length, should be a VERY short wait
 			while (fifoCount < packetSize)
 			{
