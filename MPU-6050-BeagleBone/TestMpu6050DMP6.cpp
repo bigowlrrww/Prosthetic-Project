@@ -92,48 +92,48 @@ int main() {
     //   usleep(200000);
     //}*/
 	while (ctrl) {
-		load and configure the DMP
-		// std::cout << "Initializing DMP..." << std::endl;
-		// devStatus = mpu6050dmp->dmpInitialize(mpu6050);
+		// load and configure the DMP
+		std::cout << "Initializing DMP..." << std::endl;
+		devStatus = mpu6050dmp->dmpInitialize(mpu6050);
 
-		supply your own gyro offsets here, scaled for min sensitivity
-		// mpu6050->setXGyroOffsetTC(220);
-		// mpu6050->setYGyroOffsetTC(76);
-		// mpu6050->setZGyroOffsetTC(-85);
-		// mpu6050->setZAccelOffsetTC(1788); // 1688 factory default for my test chip
+		// supply your own gyro offsets here, scaled for min sensitivity
+		mpu6050->setXGyroOffsetTC(220);
+		mpu6050->setYGyroOffsetTC(76);
+		mpu6050->setZGyroOffsetTC(-85);
+		mpu6050->setZAccelOffsetTC(1788); // 1688 factory default for my test chip
 
-		make sure it worked (returns 0 if so)
-		// if (devStatus == 0) {
-			turn on the DMP, now that it's ready
-			// std::cout << "Enabling DMP..." << std::endl;
-			// mpu6050->setDMPEnabled(true);
+		// make sure it worked (returns 0 if so)
+		if (devStatus == 0) {
+			// turn on the DMP, now that it's ready
+			std::cout << "Enabling DMP..." << std::endl;
+			mpu6050->setDMPEnabled(true);
 
-			TODO enable Beaglebone interrupt detection
-			// /*std::cout << "Enabling interrupt detection (Arduino external interrupt 0)..." << std::endl;
-			// attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-			// mpuIntStatus = mpu6050.getIntStatus();*/
+			// TODO enable Beaglebone interrupt detection
+			/*std::cout << "Enabling interrupt detection (Arduino external interrupt 0)..." << std::endl;
+			attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+			mpuIntStatus = mpu6050.getIntStatus();*/
 
-			set our DMP Ready flag so the main loop() function knows it's okay to use it
-			// std::cout << "DMP ready! Waiting for first interrupt..." << std::endl;
-			// dmpReady = true;
+			// set our DMP Ready flag so the main loop() function knows it's okay to use it
+			std::cout << "DMP ready! Waiting for first interrupt..." << std::endl;
+			dmpReady = true;
 
-			get expected DMP packet size for later comparison
-			// packetSize = mpu6050dmp->dmpGetFIFOPacketSize();
-		// } else {
-			ERROR!
-			1 = initial memory load failed
-			2 = DMP configuration updates failed
-			(if it's going to break, usually the code will be 1)
-			// std::cout << "DMP Initialization failed (code ";
-			// std::cout << devStatus;
-			// std::cout << ")" << std::endl;
-		// }
+			// get expected DMP packet size for later comparison
+			packetSize = mpu6050dmp->dmpGetFIFOPacketSize();
+		}2 else {
+			// ERROR!
+			// 1 = initial memory load failed
+			// 2 = DMP configuration updates failed
+			// (if it's going to break, usually the code will be 1)
+			std::cout << "DMP Initialization failed (code ";
+			std::cout << devStatus;
+			std::cout << ")" << std::endl;
+		}
 		
 		// if programming failed, don't try to do anything
-		// if (!dmpReady) return 1;
+		if (!dmpReady) return 1;
 
 		// wait for MPU interrupt or extra packet(s) available
-		// while (fifoCount < packetSize) {
+		while (fifoCount < packetSize) {
 			// other program behavior stuff here
 			// .
 			// .
@@ -144,116 +144,116 @@ int main() {
 			// .
 			// .
 			// .
-		// }
+		}
 
 		// reset interrupt flag and get INT_STATUS byte
-		// mpuIntStatus = mpu6050->getIntStatus();
+		mpuIntStatus = mpu6050->getIntStatus();
 
 		// get current FIFO count
-		// fifoCount = mpu6050->getFIFOCount();
+		fifoCount = mpu6050->getFIFOCount();
 
 		// check for overflow (this should never happen unless our code is too inefficient)
-		// if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+		if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
 			// reset so we can continue cleanly
-			// mpu6050->resetFIFO();
-			// std::cout << "FIFO overflow!" << std::endl;
+			mpu6050->resetFIFO();
+			std::cout << "FIFO overflow!" << std::endl;
 
 		// otherwise, check for DMP data ready interrupt (this should happen frequently)
-		// } else if (mpuIntStatus & 0x02) {
+		} else if (mpuIntStatus & 0x02) {3
 			// wait for correct available data length, should be a VERY short wait
-			// while (fifoCount < packetSize)
-			// {
-				// fifoCount = mpu6050->getFIFOCount();
-			// }
+			while (fifoCount < packetSize)
+			{
+				fifoCount = mpu6050->getFIFOCount();
+			}
 			// read a packet from FIFO
-			// mpu6050->getFIFOBytes(fifoBuffer, packetSize);
+			mpu6050->getFIFOBytes(fifoBuffer, packetSize);
 			
 			// track FIFO count here in case there is > 1 packet available
 			// (this lets us immediately read more without waiting for an interrupt)
-			// fifoCount -= packetSize;
+			fifoCount -= packetSize;
 
-			// #ifdef OUTPUT_READABLE_QUATERNION
+			#ifdef OUTPUT_READABLE_QUATERNION
 				// display quaternion values in easy matrix form: w x y z
-				// mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
-				// std::cout << "quat\t";
-				// std::cout << q.w;
-				// std::cout << "\t";
-				// std::cout << q.x;
-				// std::cout << "\t";
-				// std::cout << q.y;
-				// std::cout << "\t";
-				// std::cout << q.z << std::endl;
-			// #endif
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				std::cout << "quat\t";
+				std::cout << q.w;
+				std::cout << "\t";
+				std::cout << q.x;
+				std::cout << "\t";
+				std::cout << q.y;
+				std::cout << "\t";
+				std::cout << q.z << std::endl;
+			#endif
 
-			// #ifdef OUTPUT_READABLE_EULER
+			#ifdef OUTPUT_READABLE_EULER
 				// display Euler angles in degrees
-				// mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
-				// mpu6050dmp.dmpGetEuler(euler, &q);
-				// std::cout << "euler\t";
-				// std::cout << euler[0] * 180/M_PI;
-				// std::cout << "\t";
-				// std::cout << euler[1] * 180/M_PI;
-				// std::cout << "\t";
-				// std::cout << euler[2] * 180/M_PI << std::endl;
-			// #endif
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetEuler(euler, &q);
+				std::cout << "euler\t";
+				std::cout << euler[0] * 180/M_PI;
+				std::cout << "\t";
+				std::cout << euler[1] * 180/M_PI;
+				std::cout << "\t";
+				std::cout << euler[2] * 180/M_PI << std::endl;
+			#endif
 
-			// #ifdef OUTPUT_READABLE_YAWPITCHROLL
+			#ifdef OUTPUT_READABLE_YAWPITCHROLL
 				// display Euler angles in degrees
-				// mpu6050dmp->dmpGetQuaternion(&q, fifoBuffer);
-				// mpu6050dmp->dmpGetGravity(&gravity, &q);
-				// mpu6050dmp->dmpGetYawPitchRoll(ypr, &q, &gravity);
-				// std::cout << "ypr\t";
-				// std::cout << ypr[0] * 180/M_PI;
-				// std::cout << "\t";
-				// std::cout << ypr[1] * 180/M_PI;
-				// std::cout << "\t";
-				// std::cout << ypr[2] * 180/M_PI << std::endl;
-			// #endif
+				mpu6050dmp->dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp->dmpGetGravity(&gravity, &q);
+				mpu6050dmp->dmpGetYawPitchRoll(ypr, &q, &gravity);
+				std::cout << "ypr\t";
+				std::cout << ypr[0] * 180/M_PI;
+				std::cout << "\t";
+				std::cout << ypr[1] * 180/M_PI;
+				std::cout << "\t";
+				std::cout << ypr[2] * 180/M_PI << std::endl;
+			#endif
 
-			// #ifdef OUTPUT_READABLE_REALACCEL
-				//display real acceleration, adjusted to remove gravity
-				// mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
-				// mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
-				// mpu6050dmp.dmpGetGravity(&gravity, &q);
-				// mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-				// std::cout << "areal\t";
-				// std::cout << aaReal.x;
-				// std::cout << "\t";
-				// std::cout << aaReal.y;
-				// std::cout << "\t";
-				// std::cout << aaReal.z << std::endl;
-			// #endif
+			#ifdef OUTPUT_READABLE_REALACCEL
+				// display real acceleration, adjusted to remove gravity
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
+				mpu6050dmp.dmpGetGravity(&gravity, &q);
+				mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+				std::cout << "areal\t";
+				std::cout << aaReal.x;
+				std::cout << "\t";
+				std::cout << aaReal.y;
+				std::cout << "\t";
+				std::cout << aaReal.z << std::endl;
+			#endif
 
-			// #ifdef OUTPUT_READABLE_WORLDACCEL
-				//display initial world-frame acceleration, adjusted to remove gravity
-				//and rotated based on known orientation from quaternion
-				// mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
-				// mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
-				// mpu6050dmp.dmpGetGravity(&gravity, &q);
-				// mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-				// mpu6050dmp.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-				// std::cout << "aworld\t";
-				// std::cout << aaWorld.x;
-				// std::cout << "\t";
-				// std::cout << aaWorld.y;
-				// std::cout << "\t";
-				// std::cout << aaWorld.z << std::endl;
-			// #endif
+			#ifdef OUTPUT_READABLE_WORLDACCEL
+				// display initial world-frame acceleration, adjusted to remove gravity
+				// and rotated based on known orientation from quaternion
+				mpu6050dmp.dmpGetQuaternion(&q, fifoBuffer);
+				mpu6050dmp.dmpGetAccel(&aa, fifoBuffer);
+				mpu6050dmp.dmpGetGravity(&gravity, &q);
+				mpu6050dmp.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+				mpu6050dmp.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
+				std::cout << "aworld\t";
+				std::cout << aaWorld.x;
+				std::cout << "\t";
+				std::cout << aaWorld.y;
+				std::cout << "\t";
+				std::cout << aaWorld.z << std::endl;
+			#endif
 		
-			// #ifdef OUTPUT_TEAPOT
-				//display quaternion values in InvenSense Teapot demo format:
-				// teapotPacket[2] = fifoBuffer[0];
-				// teapotPacket[3] = fifoBuffer[1];
-				// teapotPacket[4] = fifoBuffer[4];
-				// teapotPacket[5] = fifoBuffer[5];
-				// teapotPacket[6] = fifoBuffer[8];
-				// teapotPacket[7] = fifoBuffer[9];
-				// teapotPacket[8] = fifoBuffer[12];
-				// teapotPacket[9] = fifoBuffer[13];
-				// std::cout << (string)teapotPacket << std::endl;
-				// teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-			// #endif
-		// } 
+			#ifdef OUTPUT_TEAPOT
+				// display quaternion values in InvenSense Teapot demo format:
+				teapotPacket[2] = fifoBuffer[0];
+				teapotPacket[3] = fifoBuffer[1];
+				teapotPacket[4] = fifoBuffer[4];
+				teapotPacket[5] = fifoBuffer[5];
+				teapotPacket[6] = fifoBuffer[8];
+				teapotPacket[7] = fifoBuffer[9];
+				teapotPacket[8] = fifoBuffer[12];
+				teapotPacket[9] = fifoBuffer[13];
+				std::cout << (string)teapotPacket << std::endl;
+				teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
+			#endif
+		}
 	}
     i2c->closeConnection();
     delete i2c, mpu6050;

@@ -632,4 +632,3 @@ uint8_t MPU6050DMP::dmpReadAndProcessFIFOPacket(uint8_t numPackets, uint8_t *pro
 uint16_t MPU6050DMP::dmpGetFIFOPacketSize() {
 	return dmpPacketSize;
 }
-}
