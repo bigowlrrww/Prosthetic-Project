@@ -100,7 +100,7 @@ int main() {
 		mpu6050->setXGyroOffsetTC(220);
 		mpu6050->setYGyroOffsetTC(76);
 		mpu6050->setZGyroOffsetTC(-85);
-		mpu6050->setZAccelOffsetTC(1788); // 1688 factory default for my test chip
+		// not needed? mpu6050->setZAccelOffsetTC(1788); // 1688 factory default for my test chip
 
 		// make sure it worked (returns 0 if so)
 		if (devStatus == 0) {

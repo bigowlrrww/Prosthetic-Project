@@ -203,10 +203,12 @@ const unsigned char dmpUpdates[DMP_UPDATES_SIZE] PROGMEM = {
     0x01,   0x62,   0x02,   0x00, 0x00,
     0x00,   0x60,   0x04,   0x00, 0x40, 0x00, 0x00
 };
+using namespace cacaosd_mpu6050;
+
 MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
 	this->i2c = i2c;
 }
-using namespace cacaosd_mpu6050;
+
 int dmpPacketSize;
 uint8_t *dmpPacketBuffer;
 MPU6050 *mpu6050;

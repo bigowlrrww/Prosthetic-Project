@@ -143,6 +143,10 @@
 #define RA_INT_STATUS       			0x3A
 #define RA_ZA_OFFS_H        			0x0A
 #define DLPF_BW_42          			0x03
+#define MPU6050_RA_MOT_DUR         	 	0x20
+#define MPU6050_DMP_MEMORY_CHUNK_SIZE   16
+#define MPU6050_RA_MEM_R_W          	0x6F
+
 
 using namespace cacaosd_i2cport;
 

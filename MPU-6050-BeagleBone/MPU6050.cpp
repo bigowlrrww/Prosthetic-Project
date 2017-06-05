@@ -714,6 +714,10 @@ namespace cacaosd_mpu6050 {
 		i2c->writeByte(RA_MOT_THR, threshold);
 	}
 	
+	void MPU6050::setMotionDetectionDuration(uint8_t duration) {
+		i2c->writeByte(MPU6050_RA_MOT_DUR, duration);
+	}
+	
 	void MPU6050::setZeroMotionDetectionThreshold(uint8_t threshold) {
 		i2c->writeByte(RA_ZRMOT_THR, threshold);
 	}
@@ -745,6 +749,36 @@ namespace cacaosd_mpu6050 {
 		buffer = i2c->readByte(RA_INT_STATUS);
 		return buffer;
 	}
-	
+	void MPU6050::readMemoryBlock(uint8_t *data, uint16_t dataSize, uint8_t bank, uint8_t address) {
+		setMemoryBank(bank, false, false);
+		setMemoryStartAddress(address);
+		uint8_t chunkSize;
+		for (uint16_t i = 0; i < dataSize;) {
+			// determine correct chunk size according to bank position and data size
+			chunkSize = MPU6050_DMP_MEMORY_CHUNK_SIZE;
+
+			// make sure we don't go past the data size
+			if (i + chunkSize > dataSize) chunkSize = dataSize - i;
+
+			// make sure this chunk doesn't go past the bank boundary (256 bytes)
+			if (chunkSize > 256 - address) chunkSize = 256 - address;
+
+			// read the chunk of data as specified
+			i2c->readByteBuffer(MPU6050_RA_MEM_R_W, data + i, chunkSize);
+			
+			// increase byte index by [chunkSize]
+			i += chunkSize;
+
+			// uint8_t automatically wraps to 0 at 256
+			address += chunkSize;
+
+			// if we aren't done, update bank (if necessary) and address
+			if (i < dataSize) {
+				if (address == 0) bank++;
+				setMemoryBank(bank, false, false);
+				setMemoryStartAddress(address);
+			}
+		}
+	}
 	
 }  // namespace cacaosd_mpu6050
