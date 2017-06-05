@@ -83,8 +83,10 @@
 #define DMP_CODE_SIZE       1929    // dmpMemory[]
 #define DMP_CONFIG_SIZE     192     // dmpConfig[]
 #define DMP_UPDATES_SIZE    47      // dmpUpdates[]
-namespace cacaosd_mpu6050{
-	class MPU6050DMP {
+namespace cacaosd_mpu6050
+{
+	class MPU6050DMP 
+	{
     public:
 		MPU6050DMP(I2cPort *i2c);
 		
@@ -164,5 +166,6 @@ namespace cacaosd_mpu6050{
 	private:
 		I2cPort *i2c;
         uint8_t device_address;
-};
+	};
+}
 #endif /* _6AXIS_MOTIONAPPS20_H_ */
