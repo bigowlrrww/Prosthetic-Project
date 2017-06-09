@@ -7,6 +7,7 @@
 #include "helper_3dmath.h"
 #include <csignal>
 #include <iostream>
+#include <bitset>
 #include "MPU6050.h"
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
 #define INCLUDE_DMP_MOTIONAPPS20
@@ -69,21 +70,60 @@
 
 #define DEBUG
 #ifdef DEBUG
+	const std::string red("\033[0;31m");
+	const std::string green("\033[1;32m");
+	const std::string yellow("\033[1;33m");
+	const std::string cyan("\033[0;36m");
+	const std::string magenta("\033[0;35m");
+	const std::string reset("\033[0m");
     #define DEBUG_PRINT(x) std::cout << x
+	#define DEBUG_ERROR(x) std::cout << red << x << reset
+	#define DEBUG_PRINTH(x) std::cout << yellow <<"0x" << std::hex << static_cast<int>(x) << reset
+	#define DEBUG_PRINTB(x) std::cout << cyan << "B" << std::bitset<8>(x) << reset
     #define DEBUG_PRINTF(x, y) std::cout << y << x
     #define DEBUG_PRINTLN(x) std::cout << x << std::endl
+	#define DEBUG_ERRORLN(x) std::cout << red << x << reset << std::endl
+	#define DEBUG_PRINTLNH(x) std::cout << yellow <<"0x" << std::hex << static_cast<int>(x) << reset << std::endl
     #define DEBUG_PRINTLNF(x, y) std::cout << y << x << std::endl
+	#define DEBUG_FLUSH(x) std::cout << x << std::flush
 #else
     #define DEBUG_PRINT(x)
+	#define DEBUG_ERROR(x)
+	#define DEBUG_PRINTH(y)
+	#define DEBUG_PRINTB(x)
     #define DEBUG_PRINTF(x, y)
     #define DEBUG_PRINTLN(x)
+	#define DEBUG_PRINTLNH(x)
     #define DEBUG_PRINTLNF(x, y)
+	#define DEBUG_ERRORLN
+	#define DEBUG_FLUSH
 #endif
 
 #define DMP_CODE_SIZE       1929    // dmpMemory[]
 #define DMP_CONFIG_SIZE     192     // dmpConfig[]
 #define DMP_UPDATES_SIZE    47      // dmpUpdates[]
-namespace cacaosd_mpu6050
+namespace Color {
+    enum Code {
+        FG_RED      = 31,
+        FG_GREEN    = 32,
+        FG_BLUE     = 34,
+        FG_DEFAULT  = 39,
+        BG_RED      = 41,
+        BG_GREEN    = 42,
+        BG_BLUE     = 44,
+        BG_DEFAULT  = 49
+    };
+    class Modifier {
+        Code code;
+    public:
+        Modifier(Code pCode) : code(pCode) {}
+        friend std::ostream&
+        operator<<(std::ostream& os, const Modifier& mod) {
+            return os << "\033[" << mod.code << "m";
+        }
+    };
+}
+namespace bigowl_mpu6050
 {
 	class MPU6050DMP 
 	{

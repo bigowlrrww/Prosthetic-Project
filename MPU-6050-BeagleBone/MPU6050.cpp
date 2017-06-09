@@ -17,7 +17,7 @@
 
 #include "MPU6050.h"
 
-namespace cacaosd_mpu6050 {
+namespace bigowl_mpu6050 {
 
 
     MPU6050::MPU6050(I2cPort *i2c) {
@@ -436,7 +436,7 @@ namespace cacaosd_mpu6050 {
 	void MPU6050::setMemoryBank(uint8_t bank, bool prefetchEnabled, bool userBank) {
 		bank &= 0x1F; //bank == bank AND 0x1F Bitwise Operand
 		if (userBank) bank |= 0x20; //bank == bank OR 0x20 Bitwise Operand
-		if (prefetchEnabled) bank |= 0x40; //bank == bank OR 0x40 Bitwise Operand
+		if (prefetchEnabled) bank |= 0x40; //bank == bank OR 0x40 Bitwise Operand 
 		i2c->writeByte(RA_BANK_SEL, bank);
 	}
 	
@@ -577,6 +577,7 @@ namespace cacaosd_mpu6050 {
 				if (address == 0) bank++;
 				setMemoryBank(bank, false, false);
 				setMemoryStartAddress(address);
+				usleep(20000);
 			}
 		}
 		if (verify) free(verifyBuffer);
@@ -781,4 +782,4 @@ namespace cacaosd_mpu6050 {
 		}
 	}
 	
-}  // namespace cacaosd_mpu6050
+}  // namespace bigowl_mpu6050

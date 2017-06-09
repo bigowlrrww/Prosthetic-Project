@@ -29,10 +29,10 @@
 
 #define PATH_SIZE 15
 
-#define msg_error(M, ...) printf("[ERROR]:" M "\n", ##__VA_ARGS__);
-#define msg_warning(M, ...) printf("[WARNING]:" M "\n", ##__VA_ARGS__);
+#define msg_error(M, ...) printf("\033[0;31m" "[ERROR]:" M "\n" "\033[0m", ##__VA_ARGS__);
+#define msg_warning(M, ...) printf("\033[0;33m" "[WARNING]:" M "\n" "\033[0m", ##__VA_ARGS__);
 
-namespace cacaosd_i2cport {
+namespace bigowl_i2cport {
 
     class I2cPort {
     public:
@@ -97,7 +97,7 @@ namespace cacaosd_i2cport {
         bool connection_open;
 
     };
-}  // namespace cacaosd_i2cport
+}  // namespace bigowl_i2cport
 
 #endif	/* I2cPort_H */
 

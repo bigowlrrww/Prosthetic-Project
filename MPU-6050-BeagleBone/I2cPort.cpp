@@ -16,8 +16,9 @@
  */
 
 #include "I2cPort.h"
+#include "DMP-processing.h"
 
-namespace cacaosd_i2cport {
+namespace bigowl_i2cport {
 
 /**
  * @funtion I2cPort()
@@ -35,6 +36,7 @@ namespace cacaosd_i2cport {
         this->bus_address = bus_address;
         this->path = (char *) calloc(PATH_SIZE, sizeof(char));
         sprintf(path, "/dev/i2c-%d", this->bus_address);
+		msg_warning("/dev/i2c-%d", this->bus_address);
     }
 
 /**
@@ -48,6 +50,7 @@ namespace cacaosd_i2cport {
         this->path = (char *) calloc(PATH_SIZE, sizeof(char));
         this->device_address = device_address;
         sprintf(path, "/dev/i2c-%d", this->bus_address);
+		msg_warning("/dev/i2c-%d", this->bus_address);
     }
 
 /** Default Destructor
@@ -68,6 +71,7 @@ namespace cacaosd_i2cport {
         this->bus_address = bus_address;
         this->path = (char *) calloc(PATH_SIZE, sizeof(char));
         sprintf(path, "/dev/i2c-%d", this->bus_address);
+		msg_warning("/dev/i2c-%d", this->bus_address);
     }
 
 /**
@@ -142,7 +146,6 @@ namespace cacaosd_i2cport {
         } else {
             msg_warning("Value must be 0 or 1! --> Address %d.", device_address);
         }
-
         writeByte(DATA_REGADD, temp);
 
     }
@@ -185,12 +188,19 @@ namespace cacaosd_i2cport {
     void I2cPort::writeByte(uint8_t DATA_REGADD, uint8_t data) {
 
         uint8_t buffer[2];
-
+		DEBUG_PRINT("Register: ");
+		DEBUG_PRINTH(DATA_REGADD);
+		DEBUG_PRINT("     Data: ");
+		DEBUG_PRINTB(unsigned(data));
+		DEBUG_PRINT("     HEX: ");
+		DEBUG_PRINTH(data);
+		DEBUG_PRINTLN("");
         buffer[0] = DATA_REGADD;
         buffer[1] = data;
 
         if (write(this->file_descriptor, buffer, 2) != 2) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 200");
         }
 
     }
@@ -211,10 +221,14 @@ namespace cacaosd_i2cport {
 
         if (write(this->file_descriptor, buffer, 1) != 1) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 222");
         }
+		msg_warning("/dev/i2c-%d", this->bus_address);
 
         if (write(this->file_descriptor, data, length) != length) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 227");
+			DEBUG_PRINTH(DATA_REGADD);
         }
 
     }
@@ -231,6 +245,7 @@ namespace cacaosd_i2cport {
 
         if (write(this->file_descriptor, buffer, 1) != 1) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 244");
         }
 
     }
@@ -246,6 +261,7 @@ namespace cacaosd_i2cport {
 
         if (write(this->file_descriptor, data, length) != length) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 260");
         }
 
     }
@@ -290,12 +306,14 @@ namespace cacaosd_i2cport {
 
         if (write(this->file_descriptor, buffer, 1) != 1) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 305");
         }
 
         uint8_t value[1];
 
         if (read(this->file_descriptor, value, 1) != 1) {
             msg_error("Can not read data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 312");
         }
 
         return value[0];
@@ -317,10 +335,12 @@ namespace cacaosd_i2cport {
 
         if (write(this->file_descriptor, buffer, 1) != 1) {
             msg_error("Can not write data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 334");
         }
 
         if (read(this->file_descriptor, data, length) != length) {
             msg_error("Can not read data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 339");
         }
 
     }
@@ -336,6 +356,7 @@ namespace cacaosd_i2cport {
 
         if (read(this->file_descriptor, data, length) != length) {
             msg_error("Can not read data. Address %d.", device_address);
+			DEBUG_ERRORLN("I2cPort.cpp LN# 355");
         }
 
     }
@@ -356,4 +377,4 @@ namespace cacaosd_i2cport {
         return ((int16_t) msb << 8) + lsb;
     }
 
-}  // namespace cacaosd_i2cport
+}  // namespace bigowl_i2cport

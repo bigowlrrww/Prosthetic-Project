@@ -15,6 +15,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "AllDevices.h"
+#include "MPU6050.h"
 
 using namespace cacaosd_i2cport;
 using namespace cacaosd_mpu6050;

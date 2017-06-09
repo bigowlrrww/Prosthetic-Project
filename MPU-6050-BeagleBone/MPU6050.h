@@ -148,9 +148,9 @@
 #define MPU6050_RA_MEM_R_W          	0x6F
 
 
-using namespace cacaosd_i2cport;
+using namespace bigowl_i2cport;
 
-namespace cacaosd_mpu6050 {
+namespace bigowl_mpu6050 {
 
     class MPU6050 {
     public:
@@ -402,6 +402,6 @@ namespace cacaosd_mpu6050 {
         uint8_t device_address;
 
     };
-}  // namespace cacaosd_mpu6050
+}  // namespace bigowl_mpu6050
 #endif	/* MPU6050_H */
 

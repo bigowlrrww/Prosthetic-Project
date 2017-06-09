@@ -1,8 +1,8 @@
 #include "AllDevices.h"
 #include "DMP-processing.h"
 
-using namespace cacaosd_i2cport;
-using namespace cacaosd_mpu6050;
+using namespace bigowl_i2cport;
+using namespace bigowl_mpu6050;
 
 // uncomment "OUTPUT_READABLE_QUATERNION" if you want to see the actual
 // quaternion components in a [w, x, y, z] format (not best for parsing

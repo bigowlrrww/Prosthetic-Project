@@ -20,8 +20,6 @@
 #include <csignal>
 #include <iostream>
 #include "MPU6050.h"
-#include "HMC5883L.h"
-#include "ADXL345.h"
 
 extern int ctrl;
 

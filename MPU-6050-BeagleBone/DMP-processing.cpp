@@ -203,7 +203,7 @@ const unsigned char dmpUpdates[DMP_UPDATES_SIZE] PROGMEM = {
     0x01,   0x62,   0x02,   0x00, 0x00,
     0x00,   0x60,   0x04,   0x00, 0x40, 0x00, 0x00
 };
-using namespace cacaosd_mpu6050;
+using namespace bigowl_mpu6050;
 
 MPU6050DMP::MPU6050DMP(I2cPort *i2c) {
 	this->i2c = i2c;
@@ -236,14 +236,16 @@ uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 	mpu6050->setMemoryStartAddress(0x06);
 	DEBUG_PRINTLN(F("Checking hardware revision..."));
 	DEBUG_PRINT(F("Revision @ user[16][6] = "));
-	DEBUG_PRINTLN(mpu6050->readMemoryByte());
+	DEBUG_PRINTH(mpu6050->readMemoryByte());
+	DEBUG_PRINTLN("");
 	DEBUG_PRINTLN(F("Resetting memory bank selection to 0..."));
 	mpu6050->setMemoryBank(0, false, false);
 
 	// check OTP bank valid
 	DEBUG_PRINTLN(F("Reading OTP bank valid flag..."));
 	DEBUG_PRINT(F("OTP bank is "));
-	DEBUG_PRINTLN(mpu6050->getOTPBankValid());
+	DEBUG_PRINTH(mpu6050->getOTPBankValid());
+	DEBUG_PRINTLN("");
 
 	// get X/Y/Z gyro offsets
 	DEBUG_PRINTLN(F("Reading gyro offset TC values..."));
@@ -251,11 +253,11 @@ uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 	int8_t ygOffsetTC = mpu6050->getYGyroOffsetTC();
 	int8_t zgOffsetTC = mpu6050->getZGyroOffsetTC();
 	DEBUG_PRINT(F("X gyro offset = "));
-	DEBUG_PRINTLN(xgOffsetTC);
+	DEBUG_PRINTLNH(xgOffsetTC);
 	DEBUG_PRINT(F("Y gyro offset = "));
-	DEBUG_PRINTLN(ygOffsetTC);
+	DEBUG_PRINTLNH(ygOffsetTC);
 	DEBUG_PRINT(F("Z gyro offset = "));
-	DEBUG_PRINTLN(zgOffsetTC);
+	DEBUG_PRINTLNH(zgOffsetTC);
 
 	// setup weird slave stuff (?)
 	DEBUG_PRINTLN(F("Setting slave 0 address to 0x7F..."));
@@ -377,7 +379,12 @@ uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 			mpu6050->writeMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1], false, false);
 
 			DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
-			while ((fifoCount = mpu6050->getFIFOCount()) < 3);
+			while ((fifoCount = mpu6050->getFIFOCount()) < 3){
+				DEBUG_PRINT("fifoCount = ");
+				DEBUG_PRINT(fifoCount);
+				DEBUG_FLUSH("\r");
+				usleep(200000);
+			}
 
 			DEBUG_PRINT(F("Current FIFO count="));
 			DEBUG_PRINTLN(fifoCount);
@@ -394,7 +401,13 @@ uint8_t MPU6050DMP::dmpInitialize(MPU6050 *mpu6050) {
 			mpu6050->readMemoryBlock(dmpUpdate + 3, dmpUpdate[2], dmpUpdate[0], dmpUpdate[1]);
 
 			DEBUG_PRINTLN(F("Waiting for FIFO count > 2..."));
-			while ((fifoCount = mpu6050->getFIFOCount()) < 3);
+			
+			while ((fifoCount = mpu6050->getFIFOCount()) < 3){
+				DEBUG_PRINT("fifoCount = ");
+				DEBUG_PRINT(fifoCount);
+				DEBUG_FLUSH("\r");
+				usleep(200000);
+			}
 
 			DEBUG_PRINT(F("Current FIFO count="));
 			DEBUG_PRINTLN(fifoCount);
