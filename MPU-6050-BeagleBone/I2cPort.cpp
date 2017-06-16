@@ -337,10 +337,12 @@ namespace bigowl_i2cport {
             msg_error("Can not write data. Address %d.", device_address);
 			DEBUG_ERRORLN("I2cPort.cpp LN# 334");
         }
-
+		msg_warning("readByteBuffer address-%d", DATA_REGADD);
+		
         if (read(this->file_descriptor, data, length) != length) {
             msg_error("Can not read data. Address %d.", device_address);
 			DEBUG_ERRORLN("I2cPort.cpp LN# 339");
+			DEBUG_PRINTH(DATA_REGADD);
         }
 
     }

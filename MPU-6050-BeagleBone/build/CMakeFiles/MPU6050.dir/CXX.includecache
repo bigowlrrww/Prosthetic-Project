@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/root/Linux-I2C/DataRef.cpp
+DataRef.h
+/root/Linux-I2C/DataRef.h
+
+/root/Linux-I2C/DataRef.h
+Digital.h
+/root/Linux-I2C/Digital.h
+iostream
+-
+
+/root/Linux-I2C/Digital.cpp
+Digital.h
+/root/Linux-I2C/Digital.h
+
+/root/Linux-I2C/Digital.h
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+errno.h
+-
+unistd.h
+-
+fcntl.h
+-
+poll.h
+-
+

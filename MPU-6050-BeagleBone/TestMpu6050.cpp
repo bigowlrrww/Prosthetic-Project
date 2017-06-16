@@ -16,14 +16,74 @@
  */
 #include "AllDevices.h"
 #include "MPU6050.h"
+#include <time.h>
 
-using namespace cacaosd_i2cport;
-using namespace cacaosd_mpu6050;
+
+using namespace bigowl_i2cport;
+using namespace bigowl_mpu6050;
 
 int ctrl;
+float count = 0;
+float vecX = 0;
+float vecY = 0;
+float vecZ = 0;
+float vecXprev = 0;
+float vecYprev = 0;
+float vecZprev = 0;
+float posX = 0;
+float posY = 0;
+float posZ = 0;
+float posXprev = 0;
+float posYprev = 0;
+float posZprev = 0;
+float timeC = 0.000002;//this is in fractions of a second.
+
+float k = 16000;
+int16_t *accels = (int16_t *) calloc(3, sizeof(int16_t));
+int16_t *gyros = (int16_t *) calloc(3, sizeof(int16_t));
+void testfunc(MPU6050 *mpu6050)
+{
+	count += 1;
+	mpu6050->getAccelerations(accels);
+	std::cout << (float) accels[0] / k << ",";
+	std::cout << (float) accels[1] / k << ",";
+	std::cout << (float) accels[2] / k << ",";
+
+	mpu6050->getAngularVelocities(gyros);
+	std::cout << (float) gyros[0] / k << ",";
+	std::cout << (float) gyros[1] / k << ",";
+	std::cout << (float) gyros[2] / k << ",";
+	
+	//veleocity calculations
+	vecX = (float) ((accels[0]/ k)*(timeC)+vecXprev);
+	vecY = (float) ((accels[1]/ k)*(timeC)+vecYprev);
+	vecZ = (float) ((accels[2]/ k)*(timeC)+vecZprev);
+	std::cout << vecX << ",";
+	std::cout << vecY << ",";
+	std::cout << vecZ << ",";
+	
+	//Position calculations
+	posX = (float) (vecX*(timeC)+posXprev);
+	posY = (float) (vecY*(timeC)+posYprev);
+	posZ = (float) (vecZ*(timeC)+posZprev);
+	std::cout << posX << ",";
+	std::cout << posY << ",";
+	std::cout << posZ << ",";
+	std::cout << (float) (count*timeC) << ",";
+	std::cout << (float) ((count*timeC)*(count*timeC)) << std::endl;
+	
+	vecXprev = vecX;
+	vecYprev = vecY;
+	vecZprev = vecZ;
+	
+	posXprev = posX;
+	posYprev = posY;
+	posZprev = posZ;
+	usleep(2);
+}
 
 int main() {
-
+	
     ctrl = 1;
     signal(SIGINT, signal_handler);
 
@@ -33,25 +93,55 @@ int main() {
     MPU6050 *mpu6050 = new MPU6050(i2c);
     mpu6050->initialize();
 
-    float k = 16000;
-    int16_t *accels = (int16_t *) calloc(3, sizeof(int16_t));
-    int16_t *gyros = (int16_t *) calloc(3, sizeof(int16_t));
-    while (ctrl) {
-        std::cout << "MPU6050" << std::endl;
-
+    
+	std::cout << "Accel X,Accel Y,Accel Z,Gyro X,Gyro Y,Gyro Z,Vel X,Vel Y,Vel Z,Pos X,Pos Y,Pos Z,f(X),f(X^2)" << std::endl;
+    
+	// invoke: timing(IntenseFunc1())
+	clock_t c0, c1;
+	c0 = clock();
+	std::cout << "clock start: " << c0 << std::endl;
+	testfunc(mpu6050);
+	c1 = clock();
+	std::cout << "clock end: " << c1 << std::endl;
+    /*while (ctrl) {
+		count += 1;
         mpu6050->getAccelerations(accels);
-        std::cout << "Accel X: " << (float) accels[0] / k << std::endl;
-        std::cout << "Accel Y: " << (float) accels[1] / k << std::endl;
-        std::cout << "Accel Z: " << (float) accels[2] / k << std::endl;
+		std::cout << (float) accels[0] / k << ",";
+        std::cout << (float) accels[1] / k << ",";
+        std::cout << (float) accels[2] / k << ",";
 
         mpu6050->getAngularVelocities(gyros);
-        std::cout << "Gyro X: " << (float) gyros[0] / k << std::endl;
-        std::cout << "Gyro Y: " << (float) gyros[1] / k << std::endl;
-        std::cout << "Gyro Z: " << (float) gyros[2] / k << std::endl;
-
-        std::cout << "----------------------" << std::endl;
-        usleep(200000);
-    }
+        std::cout << (float) gyros[0] / k << ",";
+        std::cout << (float) gyros[1] / k << ",";
+        std::cout << (float) gyros[2] / k << ",";
+		
+		//veleocity calculations
+		vecX = (float) ((accels[0]/ k)*(timeC)+vecXprev);
+		vecY = (float) ((accels[1]/ k)*(timeC)+vecYprev);
+		vecZ = (float) ((accels[2]/ k)*(timeC)+vecZprev);
+		std::cout << vecX << ",";
+		std::cout << vecY << ",";
+		std::cout << vecZ << ",";
+		
+		//Position calculations
+		posX = (float) (vecX*(timeC)+posXprev);
+		posY = (float) (vecY*(timeC)+posYprev);
+		posZ = (float) (vecZ*(timeC)+posZprev);
+		std::cout << posX << ",";
+		std::cout << posY << ",";
+		std::cout << posZ << ",";
+		std::cout << (float) (count*timeC) << ",";
+		std::cout << (float) ((count*timeC)*(count*timeC)) << std::endl;
+		
+		vecXprev = vecX;
+		vecYprev = vecY;
+		vecZprev = vecZ;
+		
+		posXprev = posX;
+		posYprev = posY;
+		posZprev = posZ;
+        usleep(2);
+    }*/
 
     free(accels);
     free(gyros);
@@ -60,4 +150,6 @@ int main() {
 
     return 0;
 }
+
+
 
