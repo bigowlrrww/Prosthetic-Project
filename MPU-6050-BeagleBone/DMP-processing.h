@@ -8,6 +8,7 @@
 #include <csignal>
 #include <iostream>
 #include <bitset>
+#include "Debug.h"
 #include "MPU6050.h"
 // MotionApps 2.0 DMP implementation, built using the MPU-6050EVB evaluation board
 #define INCLUDE_DMP_MOTIONAPPS20
@@ -68,38 +69,7 @@
 // after moving string constants to flash memory storage using the F()
 // compiler macro (Arduino IDE 1.0+ required).
 
-#define DEBUG
-#ifdef DEBUG
-	const std::string red("\033[0;31m");
-	const std::string green("\033[1;32m");
-	const std::string yellow("\033[1;33m");
-	const std::string cyan("\033[0;36m");
-	const std::string magenta("\033[0;35m");
-	const std::string reset("\033[0m");
-    #define DEBUG_PRINT(x) std::cout << x
-	#define DEBUG_ERROR(x) std::cout << red << x << reset
-	#define DEBUG_PRINTH(x) std::cout << yellow <<"0x" << std::hex << static_cast<int>(x) << reset
-	#define DEBUG_PRINTB(x) std::cout << cyan << "B" << std::bitset<8>(x) << reset
-    #define DEBUG_PRINTF(x, y) std::cout << y << x
-    #define DEBUG_PRINTLN(x) std::cout << x << std::endl
-	#define DEBUG_ERRORLN(x) std::cout << red << x << reset << std::endl
-	#define DEBUG_PRINTLNH(x) std::cout << yellow <<"0x" << std::hex << static_cast<int>(x) << reset << std::endl
-    #define DEBUG_PRINTLNF(x, y) std::cout << y << x << std::endl
-	#define DEBUG_FLUSH(x) std::cout << x << std::flush
-#else
-    #define DEBUG_PRINT(x)
-	#define DEBUG_ERROR(x)
-	#define DEBUG_PRINTH(y)
-	#define DEBUG_PRINTB(x)
-    #define DEBUG_PRINTF(x, y)
-    #define DEBUG_PRINTLN(x)
-	#define DEBUG_PRINTLNH(x)
-    #define DEBUG_PRINTLNF(x, y)
-	#define DEBUG_ERRORLN
-	#define DEBUG_FLUSH
-#endif
-
-#define DMP_CODE_SIZE       1929    // dmpMemory[]
+#define DMP_CODE_SIZE       1929   // dmpMemory[] //small 1929 // large program is 3062
 #define DMP_CONFIG_SIZE     192     // dmpConfig[]
 #define DMP_UPDATES_SIZE    47      // dmpUpdates[]
 namespace Color {

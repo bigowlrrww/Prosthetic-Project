@@ -1,1 +1,0 @@
-/root/Linux-I2C/build/CMakeFiles/MPU6050.dir

@@ -16,10 +16,8 @@
  */
 #include "AllDevices.h"
 
-using namespace cacaosd_i2cport;
-using namespace cacaosd_mpu6050;
-using namespace cacaosd_hmc5883l;
-using namespace cacaosd_adxl345;
+using namespace bigowl_i2cport;
+using namespace bigowl_mpu6050;
 
 int ctrl;
 

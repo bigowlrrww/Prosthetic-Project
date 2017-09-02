@@ -1,4 +1,0 @@
-/root/Linux-I2C/buildtest/CMakeFiles/ADXL345.dir
-/root/Linux-I2C/buildtest/CMakeFiles/AllDevices.dir
-/root/Linux-I2C/buildtest/CMakeFiles/HMC5883L.dir
-/root/Linux-I2C/buildtest/CMakeFiles/MPU6050.dir

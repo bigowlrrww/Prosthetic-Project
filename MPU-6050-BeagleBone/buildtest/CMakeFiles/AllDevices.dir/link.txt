@@ -1,1 +1,0 @@
-arm-linux-gnueabihf-g++    -std=c++0x -g    CMakeFiles/AllDevices.dir/I2cPort.cpp.o CMakeFiles/AllDevices.dir/ADXL345.cpp.o CMakeFiles/AllDevices.dir/HMC5883L.cpp.o CMakeFiles/AllDevices.dir/MPU6050.cpp.o CMakeFiles/AllDevices.dir/AllDevices.cpp.o  -o AllDevices -rdynamic 

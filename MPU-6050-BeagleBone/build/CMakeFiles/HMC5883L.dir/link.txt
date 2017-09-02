@@ -1,1 +1,0 @@
-arm-linux-gnueabihf-g++    -std=c++0x -g    CMakeFiles/HMC5883L.dir/HMC5883L.cpp.o CMakeFiles/HMC5883L.dir/I2cPort.cpp.o CMakeFiles/HMC5883L.dir/TestMpu6050DMP6.cpp.o  -o HMC5883L -rdynamic 
